@@ -1,0 +1,361 @@
+version: "3.9"
+
+services:
+  execute1:
+    image: tscel/geth:v1.13-base-v5
+    entrypoint: /usr/local/bin/execution.sh
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 1s
+        max_attempts: 100
+        window: 120s
+    volumes:
+      - ${BASEDIR}./config:/root/config
+      - ${BASEDIR}./data/execute1:/root/gethdata
+      - ${BASEDIR}./execute.sh:/usr/local/bin/execution.sh
+    networks:
+      meta:
+        ipv4_address: 172.83.1.31
+
+  execute2:
+    image: tscel/geth:v1.13-base-v5
+    entrypoint: /usr/local/bin/execution.sh
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 1s
+        max_attempts: 100
+        window: 120s
+    volumes:
+      - ${BASEDIR}./config:/root/config
+      - ${BASEDIR}./data/execute2:/root/gethdata
+      - ${BASEDIR}./execute.sh:/usr/local/bin/execution.sh
+    networks:
+      meta:
+        ipv4_address: 172.83.1.32
+
+  execute3:
+    image: tscel/geth:v1.13-base-v5
+    entrypoint: /usr/local/bin/execution.sh
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 1s
+        max_attempts: 100
+        window: 120s
+    volumes:
+      - ${BASEDIR}./config:/root/config
+      - ${BASEDIR}./data/execute3:/root/gethdata
+      - ${BASEDIR}./execute.sh:/usr/local/bin/execution.sh
+    networks:
+      meta:
+        ipv4_address: 172.83.1.33
+        
+  execute4:
+    image: tscel/geth:v1.13-base-v5
+    entrypoint: /usr/local/bin/execution.sh
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 1s
+        max_attempts: 100
+        window: 120s
+    volumes:
+      - ${BASEDIR}./config:/root/config
+      - ${BASEDIR}./data/execute4:/root/gethdata
+      - ${BASEDIR}./execute.sh:/usr/local/bin/execution.sh
+    networks:
+      meta:
+        ipv4_address: 172.83.1.34
+
+  execute5:
+    image: tscel/geth:v1.13-base-v5
+    entrypoint: /usr/local/bin/execution.sh
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 1s
+        max_attempts: 100
+        window: 120s
+    volumes:
+      - ${BASEDIR}./config:/root/config
+      - ${BASEDIR}./data/execute5:/root/gethdata
+      - ${BASEDIR}./execute.sh:/usr/local/bin/execution.sh
+    networks:
+      meta:
+        ipv4_address: 172.83.1.35
+
+  attacker1:
+    image: tscel/bunnyfinder:latest
+    entrypoint: attacker --config /root/config.toml --strategy ext_sandwich --max-hack-idx 85 --logpath /root/attackerdata/d.log --loglevel info
+    environment:
+      - NAME=attacker1
+
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 1s
+        max_attempts: 100
+        window: 120s
+    volumes:
+      - ${BASEDIR}./config/attacker-config.toml:/root/config.toml
+      - ${BASEDIR}./config/strategy-empty.json:/root/strategy.json
+      - ${BASEDIR}./data/attacker1:/root/attackerdata
+    networks:
+      meta:
+        ipv4_address: 172.83.1.150
+
+  beacon1:
+    image: tscel/bf.beacon:v5.2.0
+    entrypoint: /usr/local/bin/beacon-node.sh
+    environment:
+      - ALLPEERS= --peer /ip4/172.83.1.3/tcp/13000/p2p/16Uiu2HAmQDMFQcKYKt2oTPS4uvYDbGxp3S8t7oGyd8maCSq2vSCV  --peer /ip4/172.83.1.4/tcp/13000/p2p/16Uiu2HAm9XmGsj5GVuACMVZ2zNiJJw3GMngjYtNrJzLDEGWHQoCU  --peer /ip4/172.83.1.5/tcp/13000/p2p/16Uiu2HAmQqks3Wz9D3VomWeKRqTASod9nzFKPr5HhHFbmW5svFvC  --peer /ip4/172.83.1.6/tcp/13000/p2p/16Uiu2HAmFQEWfHEx24doiC6U2Xhj9XMoT2Nsd2oneGAkDkDLJMww 
+      - EXECUTE=execute1
+      - MAXPEERS=70
+      - P2PKEY=0692f57d5ddf34d0f2649d968bf82e2dda69d1f435a7f3a7a26d81a1a11e687b
+      - ATTACKER_SERVICE_URL=http://172.83.1.150:10000
+
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 1s
+        max_attempts: 100
+        window: 120s
+    volumes:
+      - ${BASEDIR}./beacon.sh:/usr/local/bin/beacon-node.sh
+      - ${BASEDIR}./config:/root/config
+      - ${BASEDIR}./data/beacon1:/root/beacondata
+    depends_on:
+      - execute1
+    networks:
+      meta:
+        ipv4_address: 172.83.1.2
+
+  beacon2:
+    image: tscel/bf.beacon:v5.2.0 
+    entrypoint: /usr/local/bin/beacon-node.sh
+    environment:
+      - ALLPEERS= --peer /ip4/172.83.1.2/tcp/13000/p2p/16Uiu2HAmDaSUVFJ2yKW3zfagjSUxp9kz9EG8bQWa5P8HAGE2evD5  --peer /ip4/172.83.1.4/tcp/13000/p2p/16Uiu2HAm9XmGsj5GVuACMVZ2zNiJJw3GMngjYtNrJzLDEGWHQoCU  --peer /ip4/172.83.1.5/tcp/13000/p2p/16Uiu2HAmQqks3Wz9D3VomWeKRqTASod9nzFKPr5HhHFbmW5svFvC  --peer /ip4/172.83.1.6/tcp/13000/p2p/16Uiu2HAmFQEWfHEx24doiC6U2Xhj9XMoT2Nsd2oneGAkDkDLJMww 
+      - EXECUTE=execute2
+      - MAXPEERS=70
+      - P2PKEY=9edcc99209261dfca0d5b79cd1ff43e2e30005c629337d921711bb77fa816dd3
+
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 1s
+        max_attempts: 100
+        window: 120s
+    volumes:
+      - ${BASEDIR}./beacon.sh:/usr/local/bin/beacon-node.sh
+      - ${BASEDIR}./config:/root/config
+      - ${BASEDIR}./data/beacon2:/root/beacondata
+    depends_on:
+      - execute2
+    networks:
+      meta:
+        ipv4_address: 172.83.1.3
+
+  beacon3:
+    image: tscel/bf.beacon:v5.2.0
+    entrypoint: /usr/local/bin/beacon-node.sh
+    environment:
+      - ALLPEERS= --peer /ip4/172.83.1.2/tcp/13000/p2p/16Uiu2HAmDaSUVFJ2yKW3zfagjSUxp9kz9EG8bQWa5P8HAGE2evD5  --peer /ip4/172.83.1.3/tcp/13000/p2p/16Uiu2HAmQDMFQcKYKt2oTPS4uvYDbGxp3S8t7oGyd8maCSq2vSCV  --peer /ip4/172.83.1.5/tcp/13000/p2p/16Uiu2HAmQqks3Wz9D3VomWeKRqTASod9nzFKPr5HhHFbmW5svFvC  --peer /ip4/172.83.1.6/tcp/13000/p2p/16Uiu2HAmFQEWfHEx24doiC6U2Xhj9XMoT2Nsd2oneGAkDkDLJMww 
+      - EXECUTE=execute3
+      - MAXPEERS=70
+      - P2PKEY=9513c7244d2983d47b54df161a3fc981b946944d7c2bba338588e0ab7dc40777
+
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 1s
+        max_attempts: 100
+        window: 120s
+    volumes:
+      - ${BASEDIR}./beacon.sh:/usr/local/bin/beacon-node.sh
+      - ${BASEDIR}./config:/root/config
+      - ${BASEDIR}./data/beacon3:/root/beacondata
+    depends_on:
+      - execute3
+    networks:
+      meta:
+        ipv4_address: 172.83.1.4
+
+  beacon4:
+    image: tscel/bf.beacon:v5.2.0
+    entrypoint: /usr/local/bin/beacon-node.sh
+    environment:
+      - ALLPEERS= --peer /ip4/172.83.1.2/tcp/13000/p2p/16Uiu2HAmDaSUVFJ2yKW3zfagjSUxp9kz9EG8bQWa5P8HAGE2evD5  --peer /ip4/172.83.1.3/tcp/13000/p2p/16Uiu2HAmQDMFQcKYKt2oTPS4uvYDbGxp3S8t7oGyd8maCSq2vSCV  --peer /ip4/172.83.1.4/tcp/13000/p2p/16Uiu2HAm9XmGsj5GVuACMVZ2zNiJJw3GMngjYtNrJzLDEGWHQoCU  --peer /ip4/172.83.1.6/tcp/13000/p2p/16Uiu2HAmFQEWfHEx24doiC6U2Xhj9XMoT2Nsd2oneGAkDkDLJMww 
+      - EXECUTE=execute4
+      - MAXPEERS=70
+      - P2PKEY=c118a256c6aa383b0d02a6ac25139566bc042c837f248e71aa38fcd961dac8aa
+
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 1s
+        max_attempts: 100
+        window: 120s
+    volumes:
+      - ${BASEDIR}./beacon.sh:/usr/local/bin/beacon-node.sh
+      - ${BASEDIR}./config:/root/config
+      - ${BASEDIR}./data/beacon4:/root/beacondata
+    depends_on:
+      - execute4
+    networks:
+      meta:
+        ipv4_address: 172.83.1.5
+
+  beacon5:
+    image: tscel/bf.beacon:v5.2.0
+    entrypoint: /usr/local/bin/beacon-node.sh
+    environment:
+      - ALLPEERS= --peer /ip4/172.83.1.2/tcp/13000/p2p/16Uiu2HAmDaSUVFJ2yKW3zfagjSUxp9kz9EG8bQWa5P8HAGE2evD5  --peer /ip4/172.83.1.3/tcp/13000/p2p/16Uiu2HAmQDMFQcKYKt2oTPS4uvYDbGxp3S8t7oGyd8maCSq2vSCV  --peer /ip4/172.83.1.4/tcp/13000/p2p/16Uiu2HAm9XmGsj5GVuACMVZ2zNiJJw3GMngjYtNrJzLDEGWHQoCU  --peer /ip4/172.83.1.5/tcp/13000/p2p/16Uiu2HAmQqks3Wz9D3VomWeKRqTASod9nzFKPr5HhHFbmW5svFvC 
+      - EXECUTE=execute5
+      - MAXPEERS=70
+      - P2PKEY=f01cd004ad47970f7ca62dadb1921a173c9686cf11e963c04d8a81f36322fd9f
+
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 1s
+        max_attempts: 100
+        window: 120s
+    volumes:
+      - ${BASEDIR}./beacon.sh:/usr/local/bin/beacon-node.sh
+      - ${BASEDIR}./config:/root/config
+      - ${BASEDIR}./data/beacon5:/root/beacondata
+    depends_on:
+      - execute5
+    networks:
+      meta:
+        ipv4_address: 172.83.1.6
+
+  validator1:
+    image: tscel/bf.validator:v5.2.0
+    entrypoint: /usr/local/bin/validator.sh
+    environment:
+      - VALIDATORS_NUM=86
+      - VALIDATORS_INDEX=0
+      - BEACONRPC=beacon1:4000
+      - ATTACKER_SERVICE_URL=http://172.17.0.1:12000
+
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 1s
+        max_attempts: 100
+        window: 120s
+    volumes:
+      - ${BASEDIR}./validator.sh:/usr/local/bin/validator.sh
+      - ${BASEDIR}./config:/root/config
+      - ${BASEDIR}./data/validator1:/root/validatordata
+    depends_on:
+      - beacon1
+    networks:
+      meta:
+        ipv4_address: 172.83.1.41
+
+  validator2:
+    image: tscel/bf.validator:v5.2.0
+    entrypoint: /usr/local/bin/validator.sh
+    environment:
+      - VALIDATORS_NUM=50
+      - VALIDATORS_INDEX=86
+      - BEACONRPC=beacon2:4000
+
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 1s
+        max_attempts: 100
+        window: 120s
+    volumes:
+      - ${BASEDIR}./validator.sh:/usr/local/bin/validator.sh
+      - ${BASEDIR}./config:/root/config
+      - ${BASEDIR}./data/validator2:/root/validatordata
+    depends_on:
+      - beacon2
+    networks:
+      meta:
+        ipv4_address: 172.83.1.42
+
+  validator3:
+    image: tscel/bf.validator:v5.2.0
+    entrypoint: /usr/local/bin/validator.sh
+    environment:
+      - VALIDATORS_NUM=51
+      - VALIDATORS_INDEX=136
+      - BEACONRPC=beacon3:4000
+
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 1s
+        max_attempts: 100
+        window: 120s
+    volumes:
+      - ${BASEDIR}./validator.sh:/usr/local/bin/validator.sh
+      - ${BASEDIR}./config:/root/config
+      - ${BASEDIR}./data/validator3:/root/validatordata
+    depends_on:
+      - beacon3
+    networks:
+      meta:
+        ipv4_address: 172.83.1.43
+
+  validator4:
+    image: tscel/bf.validator:v5.2.0
+    entrypoint: /usr/local/bin/validator.sh
+    environment:
+      - VALIDATORS_NUM=51
+      - VALIDATORS_INDEX=187
+      - BEACONRPC=beacon4:4000
+
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 1s
+        max_attempts: 100
+        window: 120s
+    volumes:
+      - ${BASEDIR}./validator.sh:/usr/local/bin/validator.sh
+      - ${BASEDIR}./config:/root/config
+      - ${BASEDIR}./data/validator4:/root/validatordata
+    depends_on:
+      - beacon4
+    networks:
+      meta:
+        ipv4_address: 172.83.1.44
+
+  validator5:
+    image: tscel/bf.validator:v5.2.0
+    entrypoint: /usr/local/bin/validator.sh
+    environment:
+      - VALIDATORS_NUM=18
+      - VALIDATORS_INDEX=238
+      - BEACONRPC=beacon5:4000
+
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 1s
+        max_attempts: 100
+        window: 120s
+    volumes:
+      - ${BASEDIR}./validator.sh:/usr/local/bin/validator.sh
+      - ${BASEDIR}./config:/root/config
+      - ${BASEDIR}./data/validator5:/root/validatordata
+    depends_on:
+      - beacon5
+    networks:
+      meta:
+        ipv4_address: 172.83.1.45
+
+networks:
+  meta:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.83.1.0/24
