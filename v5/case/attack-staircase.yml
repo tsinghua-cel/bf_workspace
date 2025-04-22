@@ -1,6 +1,21 @@
 version: "3.9"
 
 services:
+  ethmysql:
+    image: "mysql:latest"
+    environment:
+      - MYSQL_ROOT_PASSWORD=12345678
+    restart: always
+    privileged: true
+    volumes:
+      - /etc/localtime:/etc/localtime
+      - ${BASEDIR}./data/mysql/data:/var/lib/mysql
+      - ${BASEDIR}./v5/config/mysql/conf/my.cnf:/etc/my.cnf
+      - ${BASEDIR}./v5/config/mysql/init:/docker-entrypoint-initdb.d/
+    networks:
+      meta:
+        ipv4_address: 172.89.1.50
+
   execute1:
     image: tscel/geth:v1.13-base-v5
     entrypoint: /usr/local/bin/execution.sh
