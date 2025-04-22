@@ -10,10 +10,10 @@ export BASEDIR="$basedir/"
 PYTHON=$(which python3)
 
 updategenesis() {
-        docker run -it --rm -v "${basedir}/config:/root/config" --entrypoint /usr/bin/prysmctl tscel/prysmctl:v5.2.0 \
+        docker run -it --rm -v "${basedir}/v4/config:/root/config" --entrypoint /usr/bin/prysmctl tscel/prysmctl:v4.2.1 \
                 testnet \
                 generate-genesis \
-                --fork=deneb \
+                --fork=capella \
                 --num-validators=256 \
                 --genesis-time-delay=15 \
                 --output-ssz=/root/config/genesis.ssz \
@@ -83,6 +83,9 @@ case $casetype in
                 ;;
         12)
                 testcase ext-withholding
+                ;;
+        13)
+                testcase sync
                 ;;
         *)
                 testcase $casetype

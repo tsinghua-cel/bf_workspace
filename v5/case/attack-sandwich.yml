@@ -107,7 +107,7 @@ services:
         ipv4_address: 172.88.1.150
 
   beacon1:
-    image: tscel/bf.beacon:v5.2.0
+    image: tscel/bf.prysm:v5.2.0
     entrypoint: /usr/local/bin/beacon-node.sh
     environment:
       - ALLPEERS= --peer /ip4/172.88.1.3/tcp/13000/p2p/16Uiu2HAmQDMFQcKYKt2oTPS4uvYDbGxp3S8t7oGyd8maCSq2vSCV  --peer /ip4/172.88.1.4/tcp/13000/p2p/16Uiu2HAm9XmGsj5GVuACMVZ2zNiJJw3GMngjYtNrJzLDEGWHQoCU  --peer /ip4/172.88.1.5/tcp/13000/p2p/16Uiu2HAmQqks3Wz9D3VomWeKRqTASod9nzFKPr5HhHFbmW5svFvC  --peer /ip4/172.88.1.6/tcp/13000/p2p/16Uiu2HAmFQEWfHEx24doiC6U2Xhj9XMoT2Nsd2oneGAkDkDLJMww 
@@ -133,7 +133,7 @@ services:
         ipv4_address: 172.88.1.2
 
   beacon2:
-    image: tscel/bf.beacon:v5.2.0 
+    image: tscel/bf.prysm:v5.2.0 
     entrypoint: /usr/local/bin/beacon-node.sh
     environment:
       - ALLPEERS= --peer /ip4/172.88.1.2/tcp/13000/p2p/16Uiu2HAmDaSUVFJ2yKW3zfagjSUxp9kz9EG8bQWa5P8HAGE2evD5  --peer /ip4/172.88.1.4/tcp/13000/p2p/16Uiu2HAm9XmGsj5GVuACMVZ2zNiJJw3GMngjYtNrJzLDEGWHQoCU  --peer /ip4/172.88.1.5/tcp/13000/p2p/16Uiu2HAmQqks3Wz9D3VomWeKRqTASod9nzFKPr5HhHFbmW5svFvC  --peer /ip4/172.88.1.6/tcp/13000/p2p/16Uiu2HAmFQEWfHEx24doiC6U2Xhj9XMoT2Nsd2oneGAkDkDLJMww 
@@ -158,7 +158,7 @@ services:
         ipv4_address: 172.88.1.3
 
   beacon3:
-    image: tscel/bf.beacon:v5.2.0
+    image: tscel/bf.prysm:v5.2.0
     entrypoint: /usr/local/bin/beacon-node.sh
     environment:
       - ALLPEERS= --peer /ip4/172.88.1.2/tcp/13000/p2p/16Uiu2HAmDaSUVFJ2yKW3zfagjSUxp9kz9EG8bQWa5P8HAGE2evD5  --peer /ip4/172.88.1.3/tcp/13000/p2p/16Uiu2HAmQDMFQcKYKt2oTPS4uvYDbGxp3S8t7oGyd8maCSq2vSCV  --peer /ip4/172.88.1.5/tcp/13000/p2p/16Uiu2HAmQqks3Wz9D3VomWeKRqTASod9nzFKPr5HhHFbmW5svFvC  --peer /ip4/172.88.1.6/tcp/13000/p2p/16Uiu2HAmFQEWfHEx24doiC6U2Xhj9XMoT2Nsd2oneGAkDkDLJMww 
@@ -183,7 +183,7 @@ services:
         ipv4_address: 172.88.1.4
 
   beacon4:
-    image: tscel/bf.beacon:v5.2.0
+    image: tscel/bf.prysm:v5.2.0
     entrypoint: /usr/local/bin/beacon-node.sh
     environment:
       - ALLPEERS= --peer /ip4/172.88.1.2/tcp/13000/p2p/16Uiu2HAmDaSUVFJ2yKW3zfagjSUxp9kz9EG8bQWa5P8HAGE2evD5  --peer /ip4/172.88.1.3/tcp/13000/p2p/16Uiu2HAmQDMFQcKYKt2oTPS4uvYDbGxp3S8t7oGyd8maCSq2vSCV  --peer /ip4/172.88.1.4/tcp/13000/p2p/16Uiu2HAm9XmGsj5GVuACMVZ2zNiJJw3GMngjYtNrJzLDEGWHQoCU  --peer /ip4/172.88.1.6/tcp/13000/p2p/16Uiu2HAmFQEWfHEx24doiC6U2Xhj9XMoT2Nsd2oneGAkDkDLJMww 
@@ -208,7 +208,7 @@ services:
         ipv4_address: 172.88.1.5
 
   beacon5:
-    image: tscel/bf.beacon:v5.2.0
+    image: tscel/bf.prysm:v5.2.0
     entrypoint: /usr/local/bin/beacon-node.sh
     environment:
       - ALLPEERS= --peer /ip4/172.88.1.2/tcp/13000/p2p/16Uiu2HAmDaSUVFJ2yKW3zfagjSUxp9kz9EG8bQWa5P8HAGE2evD5  --peer /ip4/172.88.1.3/tcp/13000/p2p/16Uiu2HAmQDMFQcKYKt2oTPS4uvYDbGxp3S8t7oGyd8maCSq2vSCV  --peer /ip4/172.88.1.4/tcp/13000/p2p/16Uiu2HAm9XmGsj5GVuACMVZ2zNiJJw3GMngjYtNrJzLDEGWHQoCU  --peer /ip4/172.88.1.5/tcp/13000/p2p/16Uiu2HAmQqks3Wz9D3VomWeKRqTASod9nzFKPr5HhHFbmW5svFvC 
@@ -233,13 +233,13 @@ services:
         ipv4_address: 172.88.1.6
 
   validator1:
-    image: tscel/bf.validator:v5.2.0
+    image: tscel/bf.prysm:v5.2.0
     entrypoint: /usr/local/bin/validator.sh
     environment:
       - VALIDATORS_NUM=86
       - VALIDATORS_INDEX=0
       - BEACONRPC=beacon1:4000
-      - ATTACKER_SERVICE_URL=http://172.17.0.1:12000
+      - ATTACKER_SERVICE_URL=http://172.88.1.150:10000
 
     deploy:
       restart_policy:
@@ -258,7 +258,7 @@ services:
         ipv4_address: 172.88.1.41
 
   validator2:
-    image: tscel/bf.validator:v5.2.0
+    image: tscel/bf.prysm:v5.2.0
     entrypoint: /usr/local/bin/validator.sh
     environment:
       - VALIDATORS_NUM=50
@@ -282,7 +282,7 @@ services:
         ipv4_address: 172.88.1.42
 
   validator3:
-    image: tscel/bf.validator:v5.2.0
+    image: tscel/bf.prysm:v5.2.0
     entrypoint: /usr/local/bin/validator.sh
     environment:
       - VALIDATORS_NUM=51
@@ -306,7 +306,7 @@ services:
         ipv4_address: 172.88.1.43
 
   validator4:
-    image: tscel/bf.validator:v5.2.0
+    image: tscel/bf.prysm:v5.2.0
     entrypoint: /usr/local/bin/validator.sh
     environment:
       - VALIDATORS_NUM=51
@@ -330,7 +330,7 @@ services:
         ipv4_address: 172.88.1.44
 
   validator5:
-    image: tscel/bf.validator:v5.2.0
+    image: tscel/bf.prysm:v5.2.0
     entrypoint: /usr/local/bin/validator.sh
     environment:
       - VALIDATORS_NUM=18
