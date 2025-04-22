@@ -2,7 +2,7 @@
 casetype=${1:-"1"}
 
 basedir=$(pwd)
-casedir="${basedir}/case"
+casedir="${basedir}/v4/case"
 export BASEDIR="$basedir/"
 
 
@@ -14,7 +14,6 @@ updategenesis() {
                 generate-genesis \
                 --fork=capella \
                 --num-validators=256 \
-                --genesis-time-delay=15 \
                 --output-ssz=/root/config/genesis.ssz \
                 --chain-config-file=/root/config/config.yml \
                 --geth-genesis-json-in=/root/config/genesis.json \
