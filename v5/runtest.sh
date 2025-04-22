@@ -34,6 +34,7 @@ testcase() {
   fi
   mkdir -p $resultdir
   echo "Running testcase $docase"
+  echo "docker compose -p $project -f $file down" > /tmp/_stop.sh
   updategenesis
   file=$casedir/attack-$docase.yml
   project=$docase
