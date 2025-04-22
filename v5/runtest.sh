@@ -1,6 +1,5 @@
 #!/bin/bash
 casetype=${1:-"1"}
-caseduration=${2:-"9000"}
 
 basedir=$(pwd)
 casedir="${basedir}/case"
@@ -25,9 +24,11 @@ updategenesis() {
 testnormal() {
         # start mysql
         docker compose -f $casedir/mysql.yml up -d 
+	caseduration=18000
+
         # loop 10 times to run testcase basic
         for i in $(seq 1 10); do
-                testcase basic
+                testcase basic $caseduration
         done
 
         # stop mysql
@@ -38,20 +39,21 @@ testnormal() {
 teststrategy() {
         # start mysql
         docker compose -f $casedir/mysql.yml up -d 
+	caseduration=18000
 
         # loop 10 times to run ext testcase
-        for i in $(seq 1 10); do
+        for i in $(seq 1 20); do
                 switch=$(($i % 5))
                 if [ $switch -eq 0 ]; then
-                        testcase ext-exante
+                        testcase ext-exante $caseduration
                 elif [ $switch -eq 1 ]; then
-                        testcase ext-sandwich
+                        testcase ext-sandwich $caseduration
                 elif [ $switch -eq 2 ]; then
-                        testcase ext-staircase
+                        testcase ext-staircase $caseduration
                 elif [ $switch -eq 3 ]; then
-                        testcase ext-unrealized
+                        testcase ext-unrealized $caseduration
                 else
-                        testcase ext-withholding
+                        testcase ext-withholding $caseduration
                 fi
         done
         # stop mysql
@@ -60,6 +62,7 @@ teststrategy() {
 
 testcase() {
   docase=$1
+  caseduration=$2
   targetdir="${casedir}/${docase}"
   resultdir="${basedir}/results/${docase}"
 
