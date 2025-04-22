@@ -22,6 +22,42 @@ updategenesis() {
                 --geth-genesis-json-out=/root/config/genesis.json
 }
 
+testnormal() {
+        # start mysql
+        docker compose -f $casedir/mysql.yml up -d 
+        # loop 10 times to run testcase basic
+        for i in $(seq 1 10); do
+                testcase basic
+        done
+
+        # stop mysql
+        docker compose -f $casedir/mysql.yml down
+
+}
+
+teststrategy() {
+        # start mysql
+        docker compose -f $casedir/mysql.yml up -d 
+
+        # loop 10 times to run ext testcase
+        for i in $(seq 1 10); do
+                switch=$(($i % 5))
+                if [ $switch -eq 0 ]; then
+                        testcase ext-exante
+                elif [ $switch -eq 1 ]; then
+                        testcase ext-sandwich
+                elif [ $switch -eq 2 ]; then
+                        testcase ext-staircase
+                elif [ $switch -eq 3 ]; then
+                        testcase ext-unrealized
+                else
+                        testcase ext-withholding
+                fi
+        done
+        # stop mysql
+        docker compose -f $casedir/mysql.yml down
+}
+
 testcase() {
   docase=$1
   targetdir="${casedir}/${docase}"
@@ -33,7 +69,7 @@ testcase() {
     mv $resultdir $resultdir-$(date +%Y%m%d%H%M%S)
   fi
   mkdir -p $resultdir
-  echo "Running testcase $docase"
+  echo "run strategy $docase"
   echo "docker compose -p $project -f $file down" > /tmp/_stop.sh
   updategenesis
   file=$casedir/attack-$docase.yml
@@ -49,46 +85,13 @@ testcase() {
 
 echo "casetype is $casetype"
 case $casetype in
-        1)
-                testcase basic
+        "normal")
+                testnormal
                 ;;
-        2)
-                testcase mix
-                ;;
-        3)
-                testcase exante
-                ;;
-        4)
-                testcase sandwich
-                ;;
-        5)
-                testcase staircase
-                ;;
-        6)
-                testcase unrealized
-                ;;
-        7)
-                testcase withholding
-                ;;
-        8)
-                testcase ext-exante
-                ;;
-        9)
-                testcase ext-sandwich
-                ;;
-        10)
-                testcase ext-staircase
-                ;;
-        11)
-                testcase ext-unrealized
-                ;;
-        12)
-                testcase ext-withholding
-                ;;
-        13)
-                testcase sync
+        "strategy")
+                teststrategy
                 ;;
         *)
-                testcase $casetype
+                echo "unsupported casetype $casetype"
                 ;;
 esac
