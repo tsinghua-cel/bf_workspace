@@ -23,7 +23,7 @@ updategenesis() {
 testnormal() {
         # start mysql
         docker compose -f $casedir/mysql.yml up -d 
-	caseduration=18000
+	caseduration=9000
 
         # loop 10 times to run testcase basic
         for i in $(seq 1 10); do
@@ -72,10 +72,10 @@ testcase() {
   fi
   mkdir -p $resultdir
   echo "run strategy $docase"
-  echo "docker compose -p $project -f $file down" > /tmp/_stop.sh
   updategenesis
   file=$casedir/attack-$docase.yml
   project=$docase
+  echo "docker compose -p $project -f $file down" > /tmp/_stop.sh
   docker compose -p $project -f $file up -d
   echo "wait $caseduration seconds" && sleep $caseduration
   docker compose -p $project -f $file down
