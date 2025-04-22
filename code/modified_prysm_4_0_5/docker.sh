@@ -1,0 +1,6 @@
+#!/usr/bin/env sh
+docker build --no-cache -t tscel/bf.prysm:v4.0.5 -f Dockerfile.prysm .
+docker build --no-cache -t tscel/prysmctl:v4.0.5 -f Dockerfile.prysmctl .
+
+#docker push tscel/bf.prysm:v4.2.1
+#docker push tscel/prysmctl:v4.2.1
