@@ -1,11 +1,9 @@
-.PHONY: default attacker reward all clean docker docs
+.PHONY: default attacker reward all clean docker
 
 GOBIN = $(shell pwd)/build/bin
-TAG ?= latest
-GOFILES_NOVENDOR := $(shell go list -f "{{.Dir}}" ./...)
 
-VERSION := $(shell git describe --tags)
-COMMIT_SHA1 := $(shell git rev-parse HEAD)
+VERSION := "v4"
+COMMIT_SHA1 := "aabb"
 AppName := attacker
 
 default: attacker
@@ -14,11 +12,11 @@ all: attacker reward docker
 
 BUILD_FLAGS = -tags netgo -ldflags "\
 	-X github.com/tsinghua-cel/attacker-service/versions.AppName=${AppName} \
-	-X github.com/tsinghua-cel/attacker-service/versions.TagVersion=${VERSION} \
+	-X github.com/tsinghua-cel/attacker-service/versions.TagVersion="v4" \
 	-X 'github.com/tsinghua-cel/attacker-service/versions.BuildTime=`date`' \
 	-X github.com/tsinghua-cel/attacker-service/versions.CommitSha1=${COMMIT_SHA1}  \
 	-X 'github.com/tsinghua-cel/attacker-service/versions.GoVersion=`go version`' \
-	-X 'github.com/tsinghua-cel/attacker-service/versions.GitBranch=`git symbolic-ref --short -q HEAD`' \
+	-X 'github.com/tsinghua-cel/attacker-service/versions.GitBranch="v4"' \
 	"
 
 attacker:
@@ -34,5 +32,6 @@ docs:
 
 clean:
 	rm -fr build/*
+
 docker:
-	docker build -t bunnyfinder:${TAG} .
+	docker build --no-cache -t tscel/bunnyfinder:capella .
