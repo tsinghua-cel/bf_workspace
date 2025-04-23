@@ -1,100 +1,93 @@
 # BunnyFinder Repository
 
-This repository contains the implementation for the paper "BunnyFinder: Finding Incentive Flaws for Ethereum Consensus".
+## Overview
 
-It contains the implementation code for BunnyFinder, integrating different versions of the [Prysm](https://github.com/OffchainLabs/prysm) client with BunnyFinder, as well as some experimental data used in our paper.
+This repository contains the implementation for our research paper "BunnyFinder: Finding Incentive Flaws for Ethereum Consensus." It provides comprehensive resources including:
 
----
+- Complete implementation code for BunnyFinder
+- Integration frameworks for multiple versions of the [Prysm](https://github.com/OffchainLabs/prysm) client
+- Experimental datasets and results documented in our paper
 
 ## 1. Ethical Considerations
 
-All experiments are conducted on a local testnet (running on a single local machine). No experiments are conducted on the live Ethereum network. This repository does not uncover new vulnerabilities but instead analyzes known malicious reorganization attacks. We will not provide any additional exploit information.
+Our research adheres to responsible disclosure principles:
 
----
+- All experiments are conducted exclusively on isolated local testnets
+- No testing occurs on the live Ethereum network
+- This repository analyzes only previously documented malicious reorganization attacks
+- We do not disclose any new vulnerability information or additional exploit techniques
 
-## 2. Requirements
+## 2. System Requirements
 
-### 2.1. Hardware Dependencies
+### 2.1. Hardware Specifications
 
-These experiments do not require any specialized hardware. The computer used in our setup is configured as follows:
+Our experiments are designed to run on standard computing equipment. Our reference system configuration:
 
-- **CPU:** 16-core
-- **RAM:** 32 GB
-- **Storage:** 512 GB
-- **Network Bandwidth:** 100 Mbps
-
----
+| Component | Specification       |
+| --------- | ------------------- |
+| CPU       | 16-core processor   |
+| Memory    | 32 GB RAM           |
+| Storage   | 512 GB              |
+| Network   | 100 Mbps connection |
 
 ### 2.2. Software Dependencies
 
-#### 2.2.1. Docker
+#### 2.2.1. Docker Environment
 
-We use Docker to run our experiments. You can install Docker by following the instructions provided in the [official Docker documentation](https://docs.docker.com/engine/install/). Ensure that your Docker Engine version is at least Docker 24.
+We utilize Docker to ensure consistent experimental environments. Requirements:
 
----
+- Docker Engine version 24 or newer
+- Installation instructions available in the [official Docker documentation](https://docs.docker.com/engine/install/)
 
-## 3. Run the Experiments Step by Step
+## 3. Experimental Methodology
 
-We have designed two experiments that can be executed on different versions of Prysm. This repository only retains the operational scripts for Prysm v4.0.5 and Prysm v5.2.0, located in `v4/runtest.sh` and `v5/runtest.sh`, respectively.
+Our research implements two distinct experimental approaches across multiple Prysm client versions. This repository includes operational scripts for Prysm v4.0.5 and v5.2.0, located in their respective directories.
 
-- Simple experiments: Completely random strategies are generated for attacks.
-- Strategy experiments: Extend known attacks to generate new strategies for attacks.
+### Experiment Types:
 
----
+1. **Simple Experiments**: Generate and evaluate randomized attack strategies
+2. **Strategy Experiments**: Extend and refine known attack vectors to develop advanced exploitation techniques
 
-### 3.1. Build the Docker Image
+### 3.1. Environment Setup
 
-After entering the repository directory (referred to as `$HOME`), run the following script to build the Docker image:
+Begin by building the required Docker image in repository root directory:
 
-```shell
+```bash
+# Build Docker image with all dependencies
 ./build.sh
 ```
 
----
+### 3.2. Simple Experiments
 
-### 3.2. Simple experiments
+Execute randomized attack strategy tests:
 
-To run the simple experiments, execute the following commands for each version of Prysm:
-
-For Prysm v4.0.5:
-
-```shell
+```bash
+# For Prysm v4.0.5
 ./v4/runtest.sh normal
-```
 
-For Prysm v5.2.0:
-
-```shell
+# For Prysm v5.2.0
 ./v5/runtest.sh normal
 ```
 
-This experiment will take approximately 25 hours. If you need to stop the experiment early, you can execute `./v4/stop.sh` or `./v5/stop.sh`.
+**Note**: This experiment suite requires approximately 25 hours to complete. To terminate early, use `./v4/stop.sh` or `./v5/stop.sh`.
 
----
+### 3.3. Strategy Experiments
 
-### 3.3. Strategy experiment
+Execute advanced attack vector tests:
 
-To run the strategy experiments, execute the following commands for each version of Prysm:
-
-For Prysm v4.0.5:
-
-```shell
+```bash
+# For Prysm v4.0.5
 ./v4/runtest.sh strategy
-```
 
-For Prysm v5.2.0:
-
-```shell
+# For Prysm v5.2.0
 ./v5/runtest.sh strategy
 ```
 
-This experiment will take approximately 100 hours. If you need to stop the experiment early, you can execute `./v4/stop.sh` or `./v5/stop.sh`.
-
----
+**Note**: This comprehensive experiment suite requires approximately 100 hours to complete. To terminate early, use `./v4/stop.sh` or `./v5/stop.sh`.
 
 ### 3.4. Expected Output
 
-The output of each experiment should look like this:
+A successful experiment launch will produce output similar to:
 
 ```
 [+] Running 22/22
