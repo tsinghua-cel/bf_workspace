@@ -9,7 +9,7 @@ export BASEDIR="$basedir/"
 PYTHON=$(which python3)
 
 updategenesis() {
-        docker run -it --rm -v "${basedir}/v4/config:/root/config" --entrypoint /usr/bin/prysmctl tscel/prysmctl:v4.2.1 \
+        docker run -it --rm -v "${basedir}/v4/config:/root/config" --entrypoint /usr/bin/prysmctl tscel/prysmctl:v4.1.1 \
                 testnet \
                 generate-genesis \
                 --fork=capella \

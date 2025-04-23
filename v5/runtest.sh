@@ -2,7 +2,7 @@
 casetype=${1:-"1"}
 
 basedir=$(pwd)
-casedir="${basedir}/case"
+casedir="${basedir}/v5/case"
 export BASEDIR="$basedir/"
 
 

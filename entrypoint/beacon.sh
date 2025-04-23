@@ -11,7 +11,7 @@ sleep 5 && /usr/bin/beacon-chain \
         --genesis-state=/root/config/genesis.ssz \
         --bootstrap-node "${BOOTNODE}"\
         --interop-eth1data-votes \
-        --chain-config-file=/root/config/config.yml \
+        --chain-config-file=/root/config/mconfig.yml \
         --p2p-max-peers=${MAXPEERS} \
         --p2p-priv-hex=${P2PKEY} \
         --contract-deployment-block=0 \
