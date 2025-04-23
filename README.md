@@ -39,7 +39,11 @@ We utilize Docker to ensure consistent experimental environments. Requirements:
 - Docker Engine version 24 or newer
 - Installation instructions available in the [official Docker documentation](https://docs.docker.com/engine/install/)
 
-## 3. Experimental Methodology
+## 3. Experimental Data and Execution Timeline
+
+Our experimental data is stored in `./experiment/ndss_strategy.csv`. We utilized three c5.4xlarge AWS EC2 instances to conduct experiments over a total duration of 128 hours.
+
+## 4. Experimental Methodology
 
 Our research implements two distinct experimental approaches across multiple Prysm client versions. This repository includes operational scripts for Prysm v4.0.5 and v5.2.0, located in their respective directories.
 
@@ -48,7 +52,7 @@ Our research implements two distinct experimental approaches across multiple Pry
 1. **Simple Experiments**: Generate and evaluate randomized attack strategies
 2. **Strategy Experiments**: Extend and refine known attack vectors to develop advanced exploitation techniques
 
-### 3.1. Environment Setup
+### 4.1. Environment Setup
 
 Begin by building the required Docker image in repository root directory:
 
@@ -57,7 +61,7 @@ Begin by building the required Docker image in repository root directory:
 ./build.sh
 ```
 
-### 3.2. Simple Experiments
+### 4.2. Simple Experiments
 
 Execute randomized attack strategy tests:
 
@@ -71,7 +75,7 @@ Execute randomized attack strategy tests:
 
 **Note**: This experiment suite requires approximately 25 hours to complete. To terminate early, use `./v4/stop.sh` or `./v5/stop.sh`.
 
-### 3.3. Strategy Experiments
+### 4.3. Strategy Experiments
 
 Execute advanced attack vector tests:
 
@@ -85,7 +89,7 @@ Execute advanced attack vector tests:
 
 **Note**: This comprehensive experiment suite requires approximately 100 hours to complete. To terminate early, use `./v4/stop.sh` or `./v5/stop.sh`.
 
-### 3.4. Expected Output
+### 4.4. Expected Output
 
 A successful experiment launch will produce output similar to:
 
