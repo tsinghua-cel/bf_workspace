@@ -1,7 +1,8 @@
 # BunnyFinder Repository
 
-This repository contains the implementation for the paper "BunnyFinder: Finding Incentive Flaws for
-Ethereum Consensus". It includes multiple modified [Prysm](https://github.com/OffchainLabs/prysm) repos in different versions and the attacks analyzed in the paper.
+This repository contains the implementation for the paper "BunnyFinder: Finding Incentive Flaws for Ethereum Consensus".
+
+It contains the implementation code for BunnyFinder, integrating different versions of the [Prysm](https://github.com/OffchainLabs/prysm) client with BunnyFinder, as well as some experimental data used in our paper.
 
 ---
 
@@ -36,8 +37,8 @@ We use Docker to run our experiments. You can install Docker by following the in
 
 We have designed two experiments that can be executed on different versions of Prysm. This repository only retains the operational scripts for Prysm v4.0.5 and Prysm v5.2.0, located in `v4/runtest.sh` and `v5/runtest.sh`, respectively.
 
-- Simple experiments
-- Strategy experiments
+- Simple experiments: Completely random strategies are generated for attacks.
+- Strategy experiments: Extend known attacks to generate new strategies for attacks.
 
 ---
 
@@ -89,11 +90,9 @@ For Prysm v5.2.0:
 
 This experiment will take approximately 100 hours. If you need to stop the experiment early, you can execute `./v4/stop.sh` or `./v5/stop.sh`.
 
-This experiment will take approximately 80 minutes. After completion, the results can be found in the `$HOME` directory.
-
 ---
 
-### 3.5. Expected Output
+### 3.4. Expected Output
 
 The output of each experiment should look like this:
 
