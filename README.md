@@ -113,3 +113,23 @@ A successful experiment launch will produce output similar to:
  ✔ Container basic-validator1-1    Started                  0.1s
  ✔ Container basic-validator3-1    Started                  0.1s
 ```
+
+### 4.5. Result Querier
+
+At the end of the experiment, the test results will be summarized and printed to the screen. An example output is shown below:
+
+```txt
+Executing metrics queries...
+
+mysql: [Warning] Using a password on the command line interface can be insecure.
++----------+-------+
+| Metric   | Value |
++----------+-------+
+| Metric 1 |  2586 |
+| Metric 2 |     1 |
+| Metric 3 |     2 |
+| Metric 4 |    43 |
++----------+-------+
+
+Execution completed - container has been automatically removed
+```

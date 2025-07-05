@@ -82,9 +82,10 @@ testcase() {
   echo "wait $caseduration seconds" && sleep $caseduration
   docker compose -p $project -f $file down
   echo "result collect"
+  $basedir/tool/query_local.sh
   sudo mv data $resultdir/data
 
-  echo "test done and result in $resultdir"
+  echo "test done and test data in $resultdir"
 }
 
 echo "casetype is $casetype"
