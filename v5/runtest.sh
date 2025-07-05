@@ -75,8 +75,10 @@ testcase() {
   echo "run strategy $docase"
   updategenesis
   file=$casedir/attack-$docase.yml
+  mysqlfile=$casedir/attack-$docase.yml
   project=$docase
   echo "docker compose -p $project -f $file down" > /tmp/_stop.sh
+  echo "docker compose -f $mysqlfile down" >> /tmp/_stop.sh
   docker compose -p $project -f $file up -d
   echo "wait $caseduration seconds" && sleep $caseduration
   docker compose -p $project -f $file down
