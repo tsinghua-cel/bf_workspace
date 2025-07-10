@@ -17,6 +17,7 @@ import (
 	"github.com/tsinghua-cel/attacker-service/library/sandwich"
 	"github.com/tsinghua-cel/attacker-service/library/simple"
 	"github.com/tsinghua-cel/attacker-service/library/staircase"
+	"github.com/tsinghua-cel/attacker-service/library/staircaseii"
 	"github.com/tsinghua-cel/attacker-service/library/syncwrong"
 	"github.com/tsinghua-cel/attacker-service/library/three"
 	"github.com/tsinghua-cel/attacker-service/library/two"
@@ -47,6 +48,7 @@ func Init() {
 	register(&withholding.Instance{})
 	register(&unrealized.Instance{})
 	register(&staircase.Instance{})
+	register(&staircaseii.Instance{})
 	register(&confuse.Instance{})
 	register(&randomdelay.Instance{})
 

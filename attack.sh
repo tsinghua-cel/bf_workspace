@@ -1,5 +1,5 @@
 #!/bin/bash
-casetype=${1:-"1"}
+casetype=${1:-"none"}
 
 basedir=$(pwd)
 casedir="${basedir}/v5/case"
@@ -21,41 +21,11 @@ updategenesis() {
                 --geth-genesis-json-out=/root/config/genesis.json
 }
 
-testnormal() {
+runattack() {
+        caseduration=1800 # 30 minutes
         # start mysql
-        docker compose -f $casedir/mysql.yml up -d 
-	      caseduration=9000
-
-        # loop 10 times to run testcase basic
-        for i in $(seq 1 10); do
-                testcase basic $caseduration
-        done
-
-        # stop mysql
-        docker compose -f $casedir/mysql.yml down
-
-}
-
-teststrategy() {
-        # start mysql
-        docker compose -f $casedir/mysql.yml up -d 
-	      caseduration=18000
-
-        # loop 10 times to run ext testcase
-        for i in $(seq 1 20); do
-                switch=$(($i % 5))
-                if [ $switch -eq 0 ]; then
-                        testcase ext-exante $caseduration
-                elif [ $switch -eq 1 ]; then
-                        testcase ext-sandwich $caseduration
-                elif [ $switch -eq 2 ]; then
-                        testcase ext-staircase $caseduration
-                elif [ $switch -eq 3 ]; then
-                        testcase ext-unrealized $caseduration
-                else
-                        testcase ext-withholding $caseduration
-                fi
-        done
+        docker compose -f $casedir/mysql.yml up -d
+	      testcase $1 $caseduration
         # stop mysql
         docker compose -f $casedir/mysql.yml down
 }
@@ -91,11 +61,29 @@ testcase() {
 
 echo "casetype is $casetype"
 case $casetype in
-        "normal")
-                testnormal
+        "1")
+                runattack exante
                 ;;
-        "strategy")
-                teststrategy
+        "2")
+                runattack sandwich
+                ;;
+        "3")
+                runattack staircase
+                ;;
+        "4")
+                runattack unrealized
+                ;;
+        "5")
+                runattack withholding
+                ;;
+        "6")
+                runattack ext-exante
+                ;;
+        "7")
+                runattack staircaseii
+                ;;
+        "8")
+                runattack sync
                 ;;
         *)
                 echo "unsupported casetype $casetype"

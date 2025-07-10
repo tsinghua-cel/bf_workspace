@@ -23,7 +23,7 @@ updategenesis() {
 testnormal() {
         # start mysql
         docker compose -f $casedir/mysql.yml up -d 
-	caseduration=9000
+	      caseduration=9000
 
         # loop 10 times to run testcase basic
         for i in $(seq 1 10); do
@@ -38,7 +38,7 @@ testnormal() {
 teststrategy() {
         # start mysql
         docker compose -f $casedir/mysql.yml up -d 
-	caseduration=18000
+	      caseduration=18000
 
         # loop 10 times to run ext testcase
         for i in $(seq 1 20); do
