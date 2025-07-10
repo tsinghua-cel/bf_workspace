@@ -82,15 +82,15 @@ func (v *validator) SubmitSyncCommitteeMessage(ctx context.Context, slot primiti
 		return
 	}
 
-	msgSlot := msg.Slot
-	slotTime := time.Unix(int64(v.genesisTime+uint64(msgSlot)*params.BeaconConfig().SecondsPerSlot), 0)
-	log.WithFields(logrus.Fields{
-		"slot":               msg.Slot,
-		"slotStartTime":      slotTime,
-		"timeSinceSlotStart": time.Since(slotTime),
-		"blockRoot":          fmt.Sprintf("%#x", bytesutil.Trunc(msg.BlockRoot)),
-		"validatorIndex":     msg.ValidatorIndex,
-	}).Info("Submitted new sync message")
+	//msgSlot := msg.Slot
+	//slotTime := time.Unix(int64(v.genesisTime+uint64(msgSlot)*params.BeaconConfig().SecondsPerSlot), 0)
+	//log.WithFields(logrus.Fields{
+	//	"slot":               msg.Slot,
+	//	"slotStartTime":      slotTime,
+	//	"timeSinceSlotStart": time.Since(slotTime),
+	//	"blockRoot":          fmt.Sprintf("%#x", bytesutil.Trunc(msg.BlockRoot)),
+	//	"validatorIndex":     msg.ValidatorIndex,
+	//}).Info("Submitted new sync message")
 	atomic.AddUint64(&v.syncCommitteeStats.totalMessagesSubmitted, 1)
 }
 

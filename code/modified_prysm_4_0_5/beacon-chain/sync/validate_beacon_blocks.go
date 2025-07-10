@@ -2,6 +2,7 @@ package sync
 
 import (
 	"context"
+	"encoding/hex"
 	"fmt"
 	"time"
 
@@ -204,7 +205,7 @@ func (s *Service) validateBeaconBlockPubSub(ctx context.Context, pid peer.ID, ms
 		"blockSlot":          blk.Block().Slot(),
 		"sinceSlotStartTime": receivedTime.Sub(startTime),
 		"proposerIndex":      blk.Block().ProposerIndex(),
-		"graffiti":           string(graffiti[:]),
+		"graffiti":           hex.EncodeToString(graffiti[:]),
 	}).Debug("Received block")
 
 	blockVerificationGossipSummary.Observe(float64(prysmTime.Since(receivedTime).Milliseconds()))
@@ -380,7 +381,7 @@ func getBlockFields(b interfaces.ReadOnlySignedBeaconBlock) logrus.Fields {
 	return logrus.Fields{
 		"slot":          b.Block().Slot(),
 		"proposerIndex": b.Block().ProposerIndex(),
-		"graffiti":      string(graffiti[:]),
+		"graffiti":      hex.EncodeToString(graffiti[:]),
 		"version":       b.Block().Version(),
 	}
 }

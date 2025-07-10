@@ -94,8 +94,18 @@ func (vs *Server) GetBeaconBlock(ctx context.Context, req *ethpb.BlockRequest) (
 				case attackclient.CMD_NULL, attackclient.CMD_CONTINUE:
 					// do nothing.
 				}
-				newParentRoot, _ := hex.DecodeString(result.Result)
+				newParentRoot, err := attacker.FromHex(result.Result)
+				if err != nil {
+					log.WithField("result.result", result.Result).WithError(err).Error("decode new parent root failed")
+					break
+				}
 				if bytes.Compare(newParentRoot, parentRoot[:]) != 0 {
+					log.WithFields(logrus.Fields{
+						"oldParentRoot":     hex.EncodeToString(parentRoot[:]),
+						"baseOldParentRoot": base64.StdEncoding.EncodeToString(parentRoot[:]),
+						"newParentRoot":     hex.EncodeToString(newParentRoot[:]),
+						"baseNewParent":     base64.StdEncoding.EncodeToString(newParentRoot),
+					}).Info("update block new parent root")
 					copy(parentRoot[:], newParentRoot)
 					log.WithField("parentRoot", result.Result).Info("update block new parent root")
 				}
@@ -288,6 +298,8 @@ func (vs *Server) ProposeBeaconBlock(ctx context.Context, req *ethpb.GenericSign
 	if req == nil {
 		return nil, status.Errorf(codes.InvalidArgument, "empty request")
 	}
+	// change deadline ctx.
+	ctx = context.Background()
 
 	block, err := blocks.NewSignedBeaconBlock(req.Block)
 	if err != nil {
@@ -309,27 +321,28 @@ func (vs *Server) ProposeBeaconBlock(ctx context.Context, req *ethpb.GenericSign
 		return nil, status.Errorf(codes.Internal, "Could not hash tree root: %v", err)
 	}
 
-	var wg sync.WaitGroup
-	errChan := make(chan error, 1)
+	//var wg sync.WaitGroup
+	//errChan := make(chan error, 1)
 
-	wg.Add(1)
+	//wg.Add(1)
 	go func() {
-		defer wg.Done()
+		//defer wg.Done()
 		if err := vs.broadcastReceiveBlock(ctx, block, root); err != nil {
-			errChan <- errors.Wrap(err, "broadcast/receive block failed")
+			log.WithError(err).Error("got broadcast receive block failed")
+			//errChan <- errors.Wrap(err, "broadcast/receive block failed")
 			return
 		}
-		errChan <- nil
+		//errChan <- nil
 	}()
 
 	if err := vs.broadcastAndReceiveBlobs(ctx, sidecars, root); err != nil {
 		return nil, status.Errorf(codes.Internal, "Could not broadcast/receive blobs: %v", err)
 	}
 
-	wg.Wait()
-	if err := <-errChan; err != nil {
-		return nil, status.Errorf(codes.Internal, "Could not broadcast/receive block: %v", err)
-	}
+	//wg.Wait()
+	//if err := <-errChan; err != nil {
+	//	return nil, status.Errorf(codes.Internal, "Could not broadcast/receive block: %v", err)
+	//}
 
 	return &ethpb.ProposeResponse{BlockRoot: root[:]}, nil
 }

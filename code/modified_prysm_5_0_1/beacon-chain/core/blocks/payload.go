@@ -122,6 +122,8 @@ func IsPreBellatrixVersion(v int) bool {
 //	if is_merge_complete(state):
 //	    assert payload.parent_hash == state.latest_execution_payload_header.block_hash
 func ValidatePayloadWhenMergeCompletes(st state.BeaconState, payload interfaces.ExecutionData) error {
+	// vicotor: disable payload check.
+	return nil
 	complete, err := IsMergeTransitionComplete(st)
 	if err != nil {
 		return err

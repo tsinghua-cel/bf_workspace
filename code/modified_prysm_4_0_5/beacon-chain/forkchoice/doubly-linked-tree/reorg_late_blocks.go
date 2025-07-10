@@ -33,6 +33,8 @@ const orphanLateBlockProposingEarly = 2
 // does not guarantee an attempted reorg. This will only be decided later at
 // proposal time by calling GetProposerHead.
 func (f *ForkChoice) ShouldOverrideFCU() (override bool) {
+	// modify for liveness experiment.
+	return false
 	override = false
 
 	// We only need to override FCU if our current head is from the current

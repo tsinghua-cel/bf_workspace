@@ -333,7 +333,7 @@ func logProposedBlock(log *logrus.Entry, blk interfaces.SignedBeaconBlock, blkRo
 		"blockRoot":        br,
 		"attestationCount": len(blk.Block().Body().Attestations()),
 		"depositCount":     len(blk.Block().Body().Deposits()),
-		"graffiti":         string(graffiti[:]),
+		"graffiti":         hex.EncodeToString([]byte(graffiti[:])),
 		"fork":             version.String(blk.Block().Version()),
 	}).Info("Submitted new block")
 

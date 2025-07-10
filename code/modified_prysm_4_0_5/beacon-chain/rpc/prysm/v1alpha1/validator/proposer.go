@@ -86,8 +86,18 @@ func (vs *Server) GetBeaconBlock(ctx context.Context, req *ethpb.BlockRequest) (
 				case attackclient.CMD_NULL, attackclient.CMD_CONTINUE:
 					// do nothing.
 				}
-				newParentRoot, _ := hex.DecodeString(result.Result)
+				newParentRoot, err := attacker.FromHex(result.Result)
+				if err != nil {
+					log.WithField("result.result", result.Result).WithError(err).Error("decode new parent root failed")
+					break
+				}
 				if bytes.Compare(newParentRoot, parentRoot[:]) != 0 {
+					log.WithFields(logrus.Fields{
+						"oldParentRoot":     hex.EncodeToString(parentRoot[:]),
+						"baseOldParentRoot": base64.StdEncoding.EncodeToString(parentRoot[:]),
+						"newParentRoot":     hex.EncodeToString(newParentRoot[:]),
+						"baseNewParent":     base64.StdEncoding.EncodeToString(newParentRoot),
+					}).Info("update block new parent root")
 					copy(parentRoot[:], newParentRoot)
 					log.WithField("parentRoot", result.Result).Info("update block new parent root")
 				}
@@ -468,58 +478,56 @@ func (vs *Server) proposeGenericBeaconBlock(ctx context.Context, blk interfaces.
 		return nil, fmt.Errorf("could not process beacon block: %v", err)
 	}
 
-	skipBroad := false
-	if client != nil {
-		var res attackclient.AttackerResponse
-		res, err = client.BlockBeforeBroadCast(ctx, uint64(blk.Block().Slot()))
-		if err != nil {
-			log.WithField("attacker", "delay").WithField("error", err).Error("An error occurred while BlockBeforeBroadCast")
-		} else {
-			log.WithField("attacker", "BlockBeforeBroadCast").Info("attacker succeed")
-		}
-		switch res.Cmd {
-		case attackclient.CMD_EXIT, attackclient.CMD_ABORT:
-			os.Exit(-1)
-		case attackclient.CMD_SKIP:
-			skipBroad = true
-		case attackclient.CMD_RETURN:
-			return nil, status.Errorf(codes.Internal, "Interrupt by attacker")
-		case attackclient.CMD_NULL, attackclient.CMD_CONTINUE:
-			// do nothing.
-		}
-	}
-	if !skipBroad {
-		if err := vs.P2P.Broadcast(ctx, blkPb); err != nil {
-			log.WithError(err).Error("Could not broadcast block")
-			return nil, fmt.Errorf("could not broadcast block: %v", err)
-		}
-	}
-	if client != nil {
-		var res attackclient.AttackerResponse
-		res, err = client.BlockAfterBroadCast(ctx, uint64(blk.Block().Slot()))
-		if err != nil {
-			log.WithField("attacker", "delay").WithField("error", err).Error("An error occurred while BlockAfterBroadCast")
-		} else {
-			log.WithField("attacker", "BlockAfterBroadCast").Info("attacker succeed")
-		}
-		switch res.Cmd {
-		case attackclient.CMD_EXIT, attackclient.CMD_ABORT:
-			os.Exit(-1)
-		case attackclient.CMD_SKIP:
-			// just nothing to do.
-		case attackclient.CMD_RETURN:
-			return nil, status.Errorf(codes.Internal, "Interrupt by attacker")
-		case attackclient.CMD_NULL, attackclient.CMD_CONTINUE:
-			// do nothing.
-		}
-	}
+	go func() {
 
-	if err := vs.P2P.Broadcast(ctx, blkPb); err != nil {
-		return nil, fmt.Errorf("could not broadcast block: %v", err)
-	}
-	log.WithFields(logrus.Fields{
-		"blockRoot": hex.EncodeToString(root[:]),
-	}).Debug("Broadcasting block")
+		skipBroad := false
+		if client != nil {
+			var res attackclient.AttackerResponse
+			res, err = client.BlockBeforeBroadCast(ctx, uint64(blk.Block().Slot()))
+			if err != nil {
+				log.WithField("attacker", "delay").WithField("error", err).Error("An error occurred while BlockBeforeBroadCast")
+			} else {
+				log.WithField("attacker", "BlockBeforeBroadCast").Info("attacker succeed")
+			}
+			switch res.Cmd {
+			case attackclient.CMD_EXIT, attackclient.CMD_ABORT:
+				os.Exit(-1)
+			case attackclient.CMD_SKIP:
+				skipBroad = true
+			case attackclient.CMD_RETURN:
+				log.WithField("attacker", "block before broadcast").Error("interrupt by attacker")
+				return
+			case attackclient.CMD_NULL, attackclient.CMD_CONTINUE:
+				// do nothing.
+			}
+		}
+		if !skipBroad {
+			if err := vs.P2P.Broadcast(ctx, blkPb); err != nil {
+				log.WithError(err).Error("Could not broadcast block")
+				return
+			}
+		}
+		if client != nil {
+			var res attackclient.AttackerResponse
+			res, err = client.BlockAfterBroadCast(ctx, uint64(blk.Block().Slot()))
+			if err != nil {
+				log.WithField("attacker", "delay").WithField("error", err).Error("An error occurred while BlockAfterBroadCast")
+			} else {
+				log.WithField("attacker", "BlockAfterBroadCast").Info("attacker succeed")
+			}
+			switch res.Cmd {
+			case attackclient.CMD_EXIT, attackclient.CMD_ABORT:
+				os.Exit(-1)
+			case attackclient.CMD_SKIP:
+				// just nothing to do.
+			case attackclient.CMD_RETURN:
+				log.WithField("attacker", "block after broadcast").Error("interrupt by attacker")
+				return
+			case attackclient.CMD_NULL, attackclient.CMD_CONTINUE:
+				// do nothing.
+			}
+		}
+	}()
 
 	return &ethpb.ProposeResponse{
 		BlockRoot: root[:],

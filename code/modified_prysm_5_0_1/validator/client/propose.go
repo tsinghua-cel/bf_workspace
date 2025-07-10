@@ -299,7 +299,7 @@ func (v *validator) ProposeBlock(ctx context.Context, slot primitives.Slot, pubK
 		"blockRoot":        blkRoot,
 		"attestationCount": len(blk.Block().Body().Attestations()),
 		"depositCount":     len(blk.Block().Body().Deposits()),
-		"graffiti":         string(graffiti[:]),
+		"graffiti":         hex.EncodeToString([]byte(graffiti[:])),
 		"fork":             version.String(blk.Block().Version()),
 	}).Info("Submitted new block")
 

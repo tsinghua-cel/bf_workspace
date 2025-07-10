@@ -2,6 +2,7 @@ package sync
 
 import (
 	"context"
+	"encoding/hex"
 	"fmt"
 	"time"
 
@@ -215,7 +216,7 @@ func (s *Service) validateBeaconBlockPubSub(ctx context.Context, pid peer.ID, ms
 	logFields := logrus.Fields{
 		"blockSlot":     blk.Block().Slot(),
 		"proposerIndex": blk.Block().ProposerIndex(),
-		"graffiti":      string(graffiti[:]),
+		"graffiti":      hex.EncodeToString(graffiti[:]),
 	}
 	if err != nil {
 		log.WithError(err).WithFields(logFields).Warn("Received block, could not report timing information.")

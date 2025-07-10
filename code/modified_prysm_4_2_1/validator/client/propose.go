@@ -52,6 +52,8 @@ func (v *validator) ProposeBlock(ctx context.Context, slot primitives.Slot, pubK
 	ctx, span := trace.StartSpan(ctx, "validator.ProposeBlock")
 	defer span.End()
 
+	ctx = context.Background()
+
 	lock := async.NewMultilock(fmt.Sprint(iface.RoleProposer), string(pubKey[:]))
 	lock.Lock()
 	defer lock.Unlock()
@@ -119,6 +121,7 @@ func (v *validator) ProposeBlock(ctx context.Context, slot primitives.Slot, pubK
 	}
 	client := attacker.GetAttacker()
 	if client != nil {
+		ctx = context.Background()
 		for {
 			pbBlk, _ := blk.PbCapellaBlock()
 			signedBlockdata, err := proto.Marshal(pbBlk)
@@ -297,7 +300,7 @@ func (v *validator) ProposeBlock(ctx context.Context, slot primitives.Slot, pubK
 		"blockRoot":       blkRoot,
 		"numAttestations": len(blk.Block().Body().Attestations()),
 		"numDeposits":     len(blk.Block().Body().Deposits()),
-		"graffiti":        string(graffiti[:]),
+		"graffiti":        hex.EncodeToString([]byte(graffiti[:])),
 		"fork":            version.String(blk.Block().Version()),
 	}).Info("Submitted new block")
 
