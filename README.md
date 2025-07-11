@@ -54,7 +54,7 @@ Our research implements two distinct experimental approaches across multiple Pry
 
 ### 4.1. Environment Setup
 
-Begin by building the required docker image in repository root directory:
+Build the required Docker image in the repository root directory:
 
 ```bash
 # Build docker image with all dependencies
