@@ -59,33 +59,38 @@ testcase() {
   echo "test done and test data in $resultdir"
 }
 
+allcase="none exante sandwich staircase unrealized withholding selfish staircase-ii pyrrhic-victory"
+
 echo "casetype is $casetype"
 case $casetype in
-        "1")
+        "none")
+                runattack none
+                ;;
+        "exante")
                 runattack exante
                 ;;
-        "2")
+        "sandwich")
                 runattack sandwich
                 ;;
-        "3")
+        "staircase")
                 runattack staircase
                 ;;
-        "4")
+        "unrealized")
                 runattack unrealized
                 ;;
-        "5")
+        "withholding")
                 runattack withholding
                 ;;
-        "6")
+        "selfish")
                 runattack ext-exante
                 ;;
-        "7")
+        "staircase-ii")
                 runattack staircaseii
                 ;;
-        "8")
+        "pyrrhic-victory")
                 runattack sync
                 ;;
         *)
-                echo "unsupported casetype $casetype"
+                echo "unsupported casetype $casetype, supported cases are: $allcase"
                 ;;
 esac

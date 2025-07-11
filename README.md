@@ -54,10 +54,10 @@ Our research implements two distinct experimental approaches across multiple Pry
 
 ### 4.1. Environment Setup
 
-Begin by building the required Docker image in repository root directory:
+Begin by building the required docker image in repository root directory:
 
 ```bash
-# Build Docker image with all dependencies
+# Build docker image with all dependencies
 ./build.sh
 ```
 
@@ -132,4 +132,48 @@ mysql: [Warning] Using a password on the command line interface can be insecure.
 +----------+-------+
 
 Execution completed - container has been automatically removed
+```
+
+## 5. Run Individual Attacks
+
+If you want to run a specific attack individually, you can use the following commands. Each attack will last for 30 minutes or an hour.
+
+Run the modified exante reorg attack:
+```bash
+./attack.sh exante
+```
+
+Run the sandwich reorg attack:
+```bash
+./attack.sh sandwich
+```
+
+Run the unrealized justification reorg attack:
+```bash
+./attack.sh unrealized
+```
+
+Run the justification withholding reorg attack:
+```bash
+./attack.sh withholding
+```
+
+Run the staircase attack:
+```bash
+./attack.sh staircase
+```
+
+Run the selfish mining attack:
+```bash
+./attack.sh selfish
+```
+
+Run the staircase attack-II:
+```bash
+./attack.sh staircase-ii
+```
+
+Run the pyrrhic victory attack:
+```bash
+./attack.sh pyrrhic-victory
 ```

@@ -11,10 +11,12 @@ import (
 	"github.com/tsinghua-cel/attacker-service/library/ext_unrealized"
 	"github.com/tsinghua-cel/attacker-service/library/ext_withholding"
 	"github.com/tsinghua-cel/attacker-service/library/five"
+	"github.com/tsinghua-cel/attacker-service/library/none"
 	"github.com/tsinghua-cel/attacker-service/library/one"
 	"github.com/tsinghua-cel/attacker-service/library/randomdelay"
 	"github.com/tsinghua-cel/attacker-service/library/replay"
 	"github.com/tsinghua-cel/attacker-service/library/sandwich"
+	"github.com/tsinghua-cel/attacker-service/library/selfish"
 	"github.com/tsinghua-cel/attacker-service/library/simple"
 	"github.com/tsinghua-cel/attacker-service/library/staircase"
 	"github.com/tsinghua-cel/attacker-service/library/syncwrong"
@@ -59,6 +61,8 @@ func Init() {
 	register(&aiattack.Instance{})
 	register(&replay.Instance{})
 	register(&simple.Instance{})
+	register(&none.Instance{})
+	register(&selfish.Instance{})
 }
 
 func register(ins Strategy) {
