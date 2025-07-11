@@ -1,6 +1,6 @@
 #!/bin/bash
 casetype=${1:-"1"}
-testduration=${2:-"18000"}
+testduration=${2:-"1800"}
 
 basedir=$(pwd)
 casedir="${basedir}/v4/case"
