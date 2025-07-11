@@ -18,8 +18,7 @@ SELECT
 FROM t_strategy 
 WHERE 
     (honest_lose_rate_avg > 0 AND honest_lose_rate_avg < 1) 
-    AND (attacker_lose_rate_avg > 0 AND attacker_lose_rate_avg < 1) 
-    AND created_at < '2025-04-20 00:00:00'
+    AND (attacker_lose_rate_avg > 0 AND attacker_lose_rate_avg < 1)
 UNION ALL
 SELECT 
     'Metric 2' AS Metric,
@@ -27,8 +26,7 @@ SELECT
 FROM t_strategy 
 WHERE 
     honest_lose_rate_avg > 1 
-    AND attacker_lose_rate_avg > 1 
-    AND created_at < '2025-04-20 00:00:00'
+    AND attacker_lose_rate_avg > 1
 UNION ALL
 SELECT 
     'Metric 3' AS Metric,
@@ -36,8 +34,7 @@ SELECT
 FROM t_strategy 
 WHERE 
     (honest_lose_rate_avg > 1) 
-    AND (attacker_lose_rate_avg > 0 AND attacker_lose_rate_avg < 1) 
-    AND created_at < '2025-04-20 00:00:00'
+    AND (attacker_lose_rate_avg > 0 AND attacker_lose_rate_avg < 1)
 UNION ALL
 SELECT 
     'Metric 4' AS Metric,
@@ -45,8 +42,7 @@ SELECT
 FROM t_strategy 
 WHERE 
     (honest_lose_rate_avg > 0 AND honest_lose_rate_avg < 1) 
-    AND (attacker_lose_rate_avg > 1) 
-    AND created_at < '2025-04-20 00:00:00';
+    AND (attacker_lose_rate_avg > 1) ;
 SQL
 )
 

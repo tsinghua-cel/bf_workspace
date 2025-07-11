@@ -152,6 +152,22 @@ export MYSQL_PASSWORD=<Please contact us to get the password>
 ./tool/connect_ndss.sh
 ```
 
+Here are some example SQL queries you can run:
+
+###### Query the number of strategies in the database:
+```sql
+SELECT COUNT(1) FROM t_strategy where is_end=1;
+```
+
+###### Top 10 strategies order by honest lose rate average:
+```sql
+SELECT uuid,category,honest_lose_rate_avg,attacker_lose_rate_avg FROM t_strategy ORDER BY honest_lose_rate_avg DESC LIMIT 10;
+```
+
+###### Query strategy content by uuid:
+```sql
+SELECT content FROM t_strategy WHERE uuid = 'your_uuid_here';
+```
 
 ## 5. Run Individual Attacks
 
