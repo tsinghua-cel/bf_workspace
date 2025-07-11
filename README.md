@@ -116,6 +116,7 @@ A successful experiment launch will produce output similar to:
 
 ### 4.5. Result Querier
 
+#### 4.5.1 Automate Metrics Experimental Results
 Our experimental data is stored in a remote database, you can use the following commands to analyze the experimental results. 
 
 ```bash
@@ -140,6 +141,17 @@ mysql: [Warning] Using a password on the command line interface can be insecure.
 
 Execution completed - container has been automatically removed
 ```
+
+
+#### 4.5.2 Manually Retrieve Experimental Data
+Additionally, you can connect to the remote database and execute some SQL statements for queries.
+
+
+```bash
+export MYSQL_PASSWORD=<Please contact us to get the password> 
+./tool/connect_ndss.sh
+```
+
 
 ## 5. Run Individual Attacks
 
