@@ -116,7 +116,14 @@ A successful experiment launch will produce output similar to:
 
 ### 4.5. Result Querier
 
-At the end of the experiment, the test results will be summarized and printed to the screen. An example output is shown below:
+Our experimental data is stored in a remote database, you can use the following commands to analyze the experimental results. 
+
+```bash
+export MYSQL_PASSWORD=<Please contact us to get the password> 
+./tool/query_ndss.sh
+```
+
+The result will look like this:
 
 ```txt
 Executing metrics queries...
