@@ -143,7 +143,7 @@ Execution completed - container has been automatically removed
 ```
 
 
-#### 4.5.2 Manually Retrieve Experimental Data
+#### 4.5.2 Manually Retrieve Experimental Results
 Additionally, you can connect to the remote database and execute some SQL statements for queries.
 
 
