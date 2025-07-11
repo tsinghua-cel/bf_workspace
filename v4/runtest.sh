@@ -109,7 +109,6 @@ testcase() {
   if [ "$docase" != "none" ]; then
     # fetch reorg log and format output.
     grep "reorg" data/beacon2/d.log | awk -v attacktype="$docase" -F ' ' '{for(i=1;i<=NF;i++){if($i ~ /newSlot=/){split($i,a,"="); newSlot=a[2]} if($i ~ /oldSlot=/){split($i,b,"="); oldSlot=b[2]}} if (newSlot && oldSlot) {print attacktype " attack occurs reorganize blocks in slot " newSlot "-" oldSlot "."}}'
-    ./tool/query_local.sh
   fi
 
   sudo mv data $resultdir/data
