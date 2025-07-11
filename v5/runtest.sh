@@ -98,7 +98,7 @@ testcase() {
   docker compose -p $project -f $file down
   echo "result collect"
   # fetch reorg log and format output.
-  grep "reorg" data/beacon2/d.log
+  grep "reorg" data/beacon2/d.log | awk -v attacktype="$attacktype" -F ' ' '{for(i=1;i<=NF;i++){if($i ~ /newSlot=/){split($i,a,"="); newSlot=a[2]} if($i ~ /oldSlot=/){split($i,b,"="); oldSlot=b[2]}} if (newSlot && oldSlot) {print attacktype " attack occurs reorganize blocks in slot " newSlot "-" oldSlot "."}}'
   sudo mv data $resultdir/data
 
   echo "test finished and all nodes data in $resultdir"
