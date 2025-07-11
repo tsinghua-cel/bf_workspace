@@ -1,5 +1,6 @@
 #!/bin/bash
 casetype=${1:-"1"}
+testduration=${2:-"18000"}
 
 basedir=$(pwd)
 casedir="${basedir}/v5/case"
@@ -60,6 +61,19 @@ teststrategy() {
         docker compose -f $casedir/mysql.yml down
 }
 
+
+testattack() {
+          casename=$1
+          caseduration=$2
+          # start mysql
+          docker compose -f $casedir/mysql.yml up -d
+
+          testcase $casename $caseduration
+          # stop mysql
+          docker compose -f $casedir/mysql.yml down
+}
+
+
 testcase() {
   docase=$1
   caseduration=$2
@@ -75,7 +89,7 @@ testcase() {
   echo "run strategy $docase"
   updategenesis
   file=$casedir/attack-$docase.yml
-  mysqlfile=$casedir/attack-$docase.yml
+  mysqlfile=$casedir/mysql.yml
   project=$docase
   echo "docker compose -p $project -f $file down" > /tmp/_stop.sh
   echo "docker compose -f $mysqlfile down" >> /tmp/_stop.sh
@@ -83,10 +97,11 @@ testcase() {
   echo "wait $caseduration seconds" && sleep $caseduration
   docker compose -p $project -f $file down
   echo "result collect"
-  $basedir/tool/query_local.sh
+  # fetch reorg log and format output.
+  grep "reorg" data/beacon2/d.log
   sudo mv data $resultdir/data
 
-  echo "test done and test data in $resultdir"
+  echo "test finished and all nodes data in $resultdir"
 }
 
 echo "casetype is $casetype"
@@ -98,6 +113,6 @@ case $casetype in
                 teststrategy
                 ;;
         *)
-                echo "unsupported casetype $casetype"
+                testattack $casetype $testduration
                 ;;
 esac
