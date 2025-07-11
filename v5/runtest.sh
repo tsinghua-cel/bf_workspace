@@ -65,12 +65,21 @@ teststrategy() {
 testattack() {
           casename=$1
           caseduration=$2
+          # check if database dir exists, if exist, backup it.
+          dbdir="${basedir}/database"
+          if [ -d $dbdir ]; then
+            echo "database dir exist, backup it to $dbdir-$(date +%Y%m%d%H%M%S)"
+            mv $dbdir $dbdir-$(date +%Y%m%d%H%M%S)
+          fi
           # start mysql
           docker compose -f $casedir/mysql.yml up -d
 
           testcase $casename $caseduration
           # stop mysql
           docker compose -f $casedir/mysql.yml down
+          # mv the database dir to results
+          resultdir="${basedir}/results/${docase}"
+          sudo mv ${dbdir} ${resultdir}/
 }
 
 
