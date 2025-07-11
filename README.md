@@ -2,20 +2,19 @@
 
 ## Overview
 
-This repository contains the implementation for our research paper "BunnyFinder: Finding Incentive Flaws for Ethereum Consensus." It provides comprehensive resources including:
+This repository contains the implementation for our research paper "BunnyFinder: Finding Incentive Flaws for Ethereum Consensus." It  including:
 
-- Complete implementation code for BunnyFinder
-- Integration frameworks for multiple versions of the [Prysm](https://github.com/OffchainLabs/prysm) client
-- Experimental datasets and results documented in our paper
+- implementation code for BunnyFinder;
+- two versions of the [Prysm](https://github.com/OffchainLabs/prysm) client with inject points;
+- experimental datasets and results in our paper.
 
 ## 1. Ethical Considerations
 
 Our research adheres to responsible disclosure principles:
 
-- All experiments are conducted exclusively on isolated local testnets
-- No testing occurs on the live Ethereum network
-- This repository analyzes only previously documented malicious reorganization attacks
-- We do not disclose any new vulnerability information or additional exploit techniques
+- all experiments are conducted exclusively on isolated local testnets;
+- no testing occurs on the live Ethereum network;
+- the attacks we analyzed do not disclose any new vulnerability information or additional exploit techniques.
 
 ## 2. System Requirements
 
@@ -34,23 +33,11 @@ Our experiments are designed to run on standard computing equipment. Our referen
 
 #### 2.2.1. Docker Environment
 
-We utilize Docker to ensure consistent experimental environments. Requirements:
+We utilize Docker to ensure consistent experimental environments. The version of the Docker Engine version is at least 24. Installation instructions are available in the [official Docker documentation](https://docs.docker.com/engine/install/)
 
-- Docker Engine version 24 or newer
-- Installation instructions available in the [official Docker documentation](https://docs.docker.com/engine/install/)
-
-## 3. Experimental Data and Execution Timeline
-
-Our experimental data is stored in `./experiment/ndss_strategy.csv`. We utilized three c5.4xlarge AWS EC2 instances to conduct experiments over a total duration of 128 hours.
-
-## 4. Experimental Methodology
+## 3. Run our framework step by step
 
 Our research implements two distinct experimental approaches across multiple Prysm client versions. This repository includes operational scripts for Prysm v4.0.5 and v5.2.0, located in their respective directories.
-
-### Experiment Types:
-
-1. **Simple Experiments**: Generate and evaluate randomized attack strategies
-2. **Strategy Experiments**: Extend and refine known attack vectors to develop advanced exploitation techniques
 
 ### 4.1. Environment Setup
 
