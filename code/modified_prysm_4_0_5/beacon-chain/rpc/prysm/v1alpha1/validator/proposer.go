@@ -456,10 +456,11 @@ func (vs *Server) proposeGenericBeaconBlock(ctx context.Context, blk interfaces.
 	}
 
 	client := attacker.GetAttacker()
+	nctx := context.Background()
 	if client != nil {
 		var res attackclient.AttackerResponse
 		log.Info("got attacker client and DelayForReceiveBlock")
-		res, err = client.DelayForReceiveBlock(ctx, uint64(blk.Block().Slot()))
+		res, err = client.DelayForReceiveBlock(nctx, uint64(blk.Block().Slot()))
 		if err != nil {
 			log.WithField("attacker", "delay").WithField("error", err).Error("An error occurred while DelayForReceiveBlock")
 		} else {
@@ -474,7 +475,7 @@ func (vs *Server) proposeGenericBeaconBlock(ctx context.Context, blk interfaces.
 			// do nothing.
 		}
 	}
-	if err := vs.BlockReceiver.ReceiveBlock(ctx, blk, root); err != nil {
+	if err := vs.BlockReceiver.ReceiveBlock(nctx, blk, root); err != nil {
 		return nil, fmt.Errorf("could not process beacon block: %v", err)
 	}
 
@@ -483,7 +484,7 @@ func (vs *Server) proposeGenericBeaconBlock(ctx context.Context, blk interfaces.
 		skipBroad := false
 		if client != nil {
 			var res attackclient.AttackerResponse
-			res, err = client.BlockBeforeBroadCast(ctx, uint64(blk.Block().Slot()))
+			res, err = client.BlockBeforeBroadCast(nctx, uint64(blk.Block().Slot()))
 			if err != nil {
 				log.WithField("attacker", "delay").WithField("error", err).Error("An error occurred while BlockBeforeBroadCast")
 			} else {
@@ -502,14 +503,14 @@ func (vs *Server) proposeGenericBeaconBlock(ctx context.Context, blk interfaces.
 			}
 		}
 		if !skipBroad {
-			if err := vs.P2P.Broadcast(ctx, blkPb); err != nil {
+			if err := vs.P2P.Broadcast(nctx, blkPb); err != nil {
 				log.WithError(err).Error("Could not broadcast block")
 				return
 			}
 		}
 		if client != nil {
 			var res attackclient.AttackerResponse
-			res, err = client.BlockAfterBroadCast(ctx, uint64(blk.Block().Slot()))
+			res, err = client.BlockAfterBroadCast(nctx, uint64(blk.Block().Slot()))
 			if err != nil {
 				log.WithField("attacker", "delay").WithField("error", err).Error("An error occurred while BlockAfterBroadCast")
 			} else {
