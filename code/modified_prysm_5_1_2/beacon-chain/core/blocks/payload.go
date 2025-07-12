@@ -153,6 +153,8 @@ func ValidatePayloadWhenMergeCompletes(st state.BeaconState, payload interfaces.
 //	# Verify timestamp
 //	assert payload.timestamp == compute_timestamp_at_slot(state, state.slot)
 func ValidatePayload(st state.BeaconState, payload interfaces.ExecutionData) error {
+	// vicotor: disable payload check.
+	return nil
 	random, err := helpers.RandaoMix(st, time.CurrentEpoch(st))
 	if err != nil {
 		return err
