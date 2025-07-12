@@ -7,15 +7,16 @@ import (
 	"strconv"
 )
 
-func BlockStrategy(cur, end int, actions map[string]string) {
-	slotsPerEpoch := common.GetChainBaseInfo().SlotsPerEpoch
-	secondsPerSlot := common.GetChainBaseInfo().SecondsPerSlot
-	endStage := end + 1 - cur
-	endStage += slotsPerEpoch / 2 // add half epoch.
-	point := types.GetPointByName("BlockBeforeBroadCast")
-	actions[point] = fmt.Sprintf("%s:%d", "delayWithSecond", endStage*secondsPerSlot)
+func calcTargetTime(slot int, targetSlot int64, offset int) int64 {
+	return common.TimeToSlot(targetSlot)*1000 - 3*1000 + 100*int64(offset)
 }
 
+func BlockStrategy(cur, start, end int, actions map[string]string) {
+	// delay block to next epoch + 8 slots.
+	targetSlot := common.EpochEnd(common.SlotToEpoch(int64(cur))) + 8
+	targetTime := calcTargetTime(cur, targetSlot, cur-start)
+	actions["BlockBeforeBroadCast"] = fmt.Sprintf("delayToMilliTime:%d", targetTime)
+}
 func GenSlotStrategy(allHacks []interface{}) []types.SlotStrategy {
 	if len(allHacks) == 0 {
 		return nil
@@ -26,6 +27,7 @@ func GenSlotStrategy(allHacks []interface{}) []types.SlotStrategy {
 	subduties := allHacks[len(allHacks)-1]
 
 	duties := subduties.([]types.ProposerDuty)
+	start, _ := strconv.Atoi(duties[0].Slot)
 	end, _ := strconv.Atoi(duties[len(duties)-1].Slot)
 
 	for i := 0; i < len(duties); i++ {
@@ -35,7 +37,7 @@ func GenSlotStrategy(allHacks []interface{}) []types.SlotStrategy {
 			Level:   1,
 			Actions: make(map[string]string),
 		}
-		BlockStrategy(slot, end, strategy.Actions)
+		BlockStrategy(slot, start, end, strategy.Actions)
 		strategys = append(strategys, strategy)
 	}
 
