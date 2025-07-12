@@ -494,12 +494,11 @@ func (vs *Server) broadcastReceiveBlock(ctx context.Context, block interfaces.Si
 		return errors.Wrap(err, "protobuf conversion failed")
 	}
 	client := attacker.GetAttacker()
-
-	ctx = context.Background()
+	nctx := context.Background()
 	if client != nil {
 		var res attackclient.AttackerResponse
 		log.Info("got attacker client and DelayForReceiveBlock")
-		res, err = client.DelayForReceiveBlock(ctx, uint64(block.Block().Slot()))
+		res, err = client.DelayForReceiveBlock(nctx, uint64(block.Block().Slot()))
 		if err != nil {
 			log.WithField("attacker", "delay").WithField("error", err).Error("An error occurred while DelayForReceiveBlock")
 		} else {
@@ -515,7 +514,7 @@ func (vs *Server) broadcastReceiveBlock(ctx context.Context, block interfaces.Si
 		}
 	}
 
-	err = vs.BlockReceiver.ReceiveBlock(ctx, block, root, nil)
+	err = vs.BlockReceiver.ReceiveBlock(nctx, block, root, nil)
 	if err != nil {
 		return err
 	}
@@ -524,10 +523,11 @@ func (vs *Server) broadcastReceiveBlock(ctx context.Context, block interfaces.Si
 	//	bCtx := context.TODO()
 
 	skipBroad := false
+
 	if client != nil {
 		var res attackclient.AttackerResponse
 		t1 := time.Now()
-		res, err = client.BlockBeforeBroadCast(ctx, uint64(block.Block().Slot()))
+		res, err = client.BlockBeforeBroadCast(nctx, uint64(block.Block().Slot()))
 		if err != nil {
 			log.WithField("attacker", "delay").WithField("error", err).Error("An error occurred while BlockBeforeBroadCast")
 		} else {
@@ -551,14 +551,14 @@ func (vs *Server) broadcastReceiveBlock(ctx context.Context, block interfaces.Si
 
 	if !skipBroad {
 
-		if err := vs.P2P.Broadcast(ctx, protoBlock); err != nil {
+		if err := vs.P2P.Broadcast(nctx, protoBlock); err != nil {
 			return errors.Wrap(err, "broadcast failed")
 		}
 	}
 
 	if client != nil {
 		var res attackclient.AttackerResponse
-		res, err = client.BlockAfterBroadCast(ctx, uint64(block.Block().Slot()))
+		res, err = client.BlockAfterBroadCast(nctx, uint64(block.Block().Slot()))
 		if err != nil {
 			log.WithField("attacker", "delay").WithField("error", err).Error("An error occurred while BlockAfterBroadCast")
 		} else {
