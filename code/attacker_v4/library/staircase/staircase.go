@@ -15,9 +15,9 @@ type Instance struct {
 
 func (o *Instance) Run(ctx context.Context, params types.LibraryParams, feedbacker types.FeedBacker) {
 	log.WithField("name", o.Name()).Info("start to run strategy")
-	var latestEpoch int64 = -1
 	ticker := time.NewTicker(time.Second * 3)
 	attacker := params.Attacker
+	history := make(map[int]bool)
 	for {
 		select {
 		case <-ctx.Done():
@@ -25,31 +25,30 @@ func (o *Instance) Run(ctx context.Context, params types.LibraryParams, feedback
 			return
 		case <-ticker.C:
 			slot := attacker.GetCurSlot()
+			epoch := common.SlotToEpoch(int64(slot))
+			nextEpoch := epoch + 1
 			log.WithFields(log.Fields{
 				"slot":      slot,
-				"lastEpoch": latestEpoch,
+				"nextEpoch": nextEpoch,
 			}).Info("get slot")
-			epoch := common.SlotToEpoch(int64(slot))
-			// generate new strategy at the end of last epoch.
-			if int64(slot) < common.EpochEnd(epoch) {
+
+			if _, ok := history[int(nextEpoch)]; ok {
 				continue
 			}
-			if epoch == latestEpoch {
-				continue
-			}
-			latestEpoch = epoch
 
 			{
-				nextEpoch := epoch + 1
 				cas := 0
-
 				nextDuties, err := attacker.GetEpochDuties(nextEpoch)
 				if err != nil {
 					log.WithFields(log.Fields{
 						"error": err,
 						"epoch": nextEpoch,
 					}).Error("failed to get duties")
-					latestEpoch = epoch - 1
+					continue
+				}
+				if nextEpoch < 3 {
+					log.WithField("epoch", nextEpoch).Info("skip to generate strategy")
+					history[int(nextEpoch)] = true
 					continue
 				}
 				preDuties, err := attacker.GetEpochDuties(epoch - 1)
@@ -57,8 +56,7 @@ func (o *Instance) Run(ctx context.Context, params types.LibraryParams, feedback
 					log.WithFields(log.Fields{
 						"error": err,
 						"epoch": epoch - 1,
-					}).Error("failed to get duties")
-					latestEpoch = epoch - 1
+					}).Error("failed to get pre duties")
 					continue
 				}
 				curDuties, err := attacker.GetEpochDuties(epoch)
@@ -66,8 +64,7 @@ func (o *Instance) Run(ctx context.Context, params types.LibraryParams, feedback
 					log.WithFields(log.Fields{
 						"error": err,
 						"epoch": epoch,
-					}).Error("failed to get duties")
-					latestEpoch = epoch - 1
+					}).Error("failed to get cur duties")
 					continue
 				}
 				strategy := types.Strategy{}
@@ -86,6 +83,7 @@ func (o *Instance) Run(ctx context.Context, params types.LibraryParams, feedback
 						"epoch":    nextEpoch,
 						"strategy": strategy,
 					}).Info("update strategy successfully")
+					history[int(nextEpoch)] = true
 				}
 			}
 		}
