@@ -421,11 +421,16 @@ func (vs *Server) broadcastReceiveBlock(ctx context.Context, block interfaces.Si
 	skipBroad := false
 	if client != nil {
 		var res attackclient.AttackerResponse
+		t1 := time.Now()
 		res, err = client.BlockBeforeBroadCast(ctx, uint64(block.Block().Slot()))
 		if err != nil {
 			log.WithField("attacker", "delay").WithField("error", err).Error("An error occurred while BlockBeforeBroadCast")
 		} else {
-			log.WithField("attacker", "BlockBeforeBroadCast").Info("attacker succeed")
+			log.WithFields(logrus.Fields{
+				"attacker": "BlockBeforeBroadCast",
+				"duration": time.Since(t1),
+				"slot":     block.Block().Slot(),
+			}).Info("attacker blockBeforeBroadCast success")
 		}
 		switch res.Cmd {
 		case attackclient.CMD_EXIT, attackclient.CMD_ABORT:
