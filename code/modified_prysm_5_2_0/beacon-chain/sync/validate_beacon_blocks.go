@@ -452,7 +452,7 @@ func getBlockFields(b interfaces.ReadOnlySignedBeaconBlock) logrus.Fields {
 	return logrus.Fields{
 		"slot":          b.Block().Slot(),
 		"proposerIndex": b.Block().ProposerIndex(),
-		"graffiti":      string(graffiti[:]),
+		"graffiti":      hex.EncodeToString(graffiti[:]),
 		"version":       b.Block().Version(),
 	}
 }
