@@ -1,0 +1,11 @@
+rpc_port = 10000
+http_port = 10001 
+http_host="0.0.0.0"
+metrics_port = 28080
+execute_rpc = "http://execute2:8545"
+beacon_rpc = "beacon2:3500"
+honest_beacon_rpc = "beacon2:3500"
+reward_file = "/root/attackerdata/reward.csv"
+strategy = "/root/strategy.json"
+swag_host="127.0.0.1:12100"
+dbconnect = "eth:12345678@tcp(172.17.0.1:23306)/eth"
