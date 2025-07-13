@@ -17,6 +17,7 @@ import (
 	"github.com/tsinghua-cel/attacker-service/library/replay"
 	"github.com/tsinghua-cel/attacker-service/library/sandwich"
 	"github.com/tsinghua-cel/attacker-service/library/selfish"
+	"github.com/tsinghua-cel/attacker-service/library/selfishhonest"
 	"github.com/tsinghua-cel/attacker-service/library/simple"
 	"github.com/tsinghua-cel/attacker-service/library/staircase"
 	"github.com/tsinghua-cel/attacker-service/library/staircaseii"
@@ -65,6 +66,7 @@ func Init() {
 	register(&simple.Instance{})
 	register(&none.Instance{})
 	register(&selfish.Instance{})
+	register(&selfishhonest.Instance{})
 }
 
 func register(ins Strategy) {
