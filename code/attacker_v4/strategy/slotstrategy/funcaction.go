@@ -394,40 +394,47 @@ func GetFunctionAction(backend types.ServiceBackend, actions string) (ActionDo, 
 			r := plugins.PluginResponse{
 				Cmd: types.CMD_NULL,
 			}
+			epoch := common.SlotToEpoch(slot)
+			last := epoch - 1
+			if last < 0 {
+				last = 0
+			}
+			minSlot := common.EpochStart(last)
+			maxSlot := common.EpochEnd(epoch)
+			log.WithFields(log.Fields{
+				"slot":   slot,
+				"action": name,
+			}).Info("do action ")
 
 			if len(params) == 0 {
 				return r
 			}
-			block := params[0].(*ethpb.SignedBeaconBlockCapella)
-			epoch := common.SlotToEpoch(slot)
-			startEpoch := common.EpochStart(epoch)
-			endEpoch := common.EpochEnd(epoch)
-			attackerAttestations := make([]*ethpb.Attestation, 0)
-			validatorSet := backend.GetValidatorDataSet()
-			log.WithFields(log.Fields{
-				"slot": slot,
-			}).Info("rePackAttestation")
-			for i := startEpoch; i <= endEpoch; i++ {
-				allSlotAttest := backend.GetAttestSet(uint64(i))
-				if allSlotAttest == nil {
-					continue
-				}
+			block, ok := params[0].(*ethpb.SignedBeaconBlockDeneb)
+			if !ok {
+				log.WithFields(log.Fields{
+					"param": fmt.Sprintf("%T", params[0]),
+				}).Error("invalid param type, require *ethpb.SignedBeaconBlockDeneb")
+				r.Result = params[0]
+				return r
+			}
 
-				for publicKey, att := range allSlotAttest.Attestations {
-					val := validatorSet.GetValidatorByPubkey(publicKey)
-					if val == nil {
-						log.WithField("pubkey", publicKey).Debug("validator not found")
-						continue
-					}
-					valRole := backend.GetValidatorRole(int(i), int(val.Index))
-					if val != nil && valRole == types.AttackerRole {
-						log.WithField("pubkey", publicKey).Debug("add attacker attestation to block")
-						attackerAttestations = append(attackerAttestations, att)
-					}
-					//log.WithField("pubkey", publicKey).Debug("add attacker attestation to block")
-					//attackerAttestations = append(attackerAttestations, att)
+			attackerAttestations := make([]*ethpb.Attestation, 0)
+			pool := backend.GetAttestPool()
+			for ns, atts := range pool {
+				if int64(ns) < minSlot || int64(ns) > maxSlot {
+					log.WithField("slot", ns).Debug("skip attestation at slot")
+					continue
+				} else {
+					log.WithFields(log.Fields{
+						"slot": ns,
+						"atts": len(atts),
+					}).Debug("pack attestation at slot")
+				}
+				for _, att := range atts {
+					attackerAttestations = append(attackerAttestations, att)
 				}
 			}
+			backend.ResetAttestPool()
 
 			allAtt := append(block.Block.Body.Attestations, attackerAttestations...)
 			{
