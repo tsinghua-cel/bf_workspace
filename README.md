@@ -6,7 +6,7 @@ This repository contains the implementation for our paper "BunnyFinder: Finding 
 
 - Implementation code for BunnyFinder
 
-- Two versions of the [Prysm](https://github.com/OffchainLabs/prysm) client (v4.0.2 and v5.2.0) with injection points
+- Two versions of the [Prysm](https://github.com/OffchainLabs/prysm) client (v4.0.5 and v5.2.0) with injection points
 - Experimental datasets and results from our paper
 
 ## Ethical Considerations
