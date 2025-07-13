@@ -49,10 +49,11 @@ func getSlotStrategy(slot string, cas int, isLatestHackSlot bool) types.SlotStra
 
 }
 
-func GenSlotStrategy(hackDuties []types.ProposerDuty, cas int) []types.SlotStrategy {
+func GenSlotStrategy(duties []types.ProposerDuty, hackduties []types.ProposerDuty, cas int) []types.SlotStrategy {
 	strategys := make([]types.SlotStrategy, 0)
-	for i := 0; i < len(hackDuties); i++ {
-		s := getSlotStrategy(hackDuties[i].Slot, cas, i == len(hackDuties)-1)
+	for i := 0; i < len(duties); i++ {
+		duty := duties[i]
+		s := getSlotStrategy(duty.Slot, cas, duty.Slot == hackduties[len(hackduties)-1].Slot)
 		strategys = append(strategys, s)
 	}
 	return strategys
