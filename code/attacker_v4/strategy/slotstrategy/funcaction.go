@@ -409,11 +409,11 @@ func GetFunctionAction(backend types.ServiceBackend, actions string) (ActionDo, 
 			if len(params) == 0 {
 				return r
 			}
-			block, ok := params[0].(*ethpb.SignedBeaconBlockDeneb)
+			block, ok := params[0].(*ethpb.SignedBeaconBlockCapella)
 			if !ok {
 				log.WithFields(log.Fields{
 					"param": fmt.Sprintf("%T", params[0]),
-				}).Error("invalid param type, require *ethpb.SignedBeaconBlockDeneb")
+				}).Error("invalid param type, require *ethpb.SignedBeaconBlockCapella")
 				r.Result = params[0]
 				return r
 			}
