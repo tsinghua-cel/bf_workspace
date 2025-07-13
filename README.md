@@ -131,7 +131,7 @@ result collect
 ## Experiments
 
 ### Experiment 1: Known Incentive Attacks (E1)
-**Duration**: 30 human-minutes + 5 compute-hours
+**Duration**: 30 human-minutes + 3 compute-hours
 
 Reproduce five known incentive attacks:
 
@@ -143,16 +143,6 @@ Reproduce five known incentive attacks:
 #### Sandwich Reorg Attack (Prysm 5.2.0)  
 ```bash
 ./attack.sh sandwich
-```
-
-#### Unrealized Justification Attack (Prysm 4.0.5)
-```bash
-./attack.sh unrealized
-```
-
-#### Justification Withholding Attack (Prysm 4.0.5)
-```bash
-./attack.sh withholding
 ```
 
 #### Staircase Attack (Prysm 4.0.5)
@@ -182,8 +172,8 @@ Reproduce five known incentive attacks:
  ✔ Container exante-execute5-1    Removed 10.8s
  ✔ Network exante_meta            Removed  0.8s
 result collect
-exante attack occurs reorganize blocks in slot 8.
-exante attack occurs reorganize blocks in slot 23.
+exante attack occurs reorganize blocks in slot 8-9.
+exante attack occurs reorganize blocks in slot 23-24.
 ...
 test finished and all nodes data in $HOME/results/exante
 ```
@@ -193,7 +183,7 @@ test finished and all nodes data in $HOME/results/exante
 
 Identify three previously unknown incentive attacks:
 
-#### Selfish Mining Attack (Prysm 5.2.0)
+#### Selfish Mining Attack (Prysm 4.0.5)
 ```bash
 ./attack.sh selfish
 ```
@@ -230,10 +220,8 @@ Identify three previously unknown incentive attacks:
  - Container staircaseii-execute5-1    Removed 10.8s
  - Network staircaseii_meta            Removed  0.8s
 result collect
-staircaseii attack occurs reorganize blocks in slot 
-152-216.
-staircaseii attack occurs reorganize blocks in slot 
-542-595.
+staircaseii attack occurs reorganize blocks in slot 152-216.
+staircaseii attack occurs reorganize blocks in slot 542-595.
 test finished and all nodes data in /home/ec2-user/
 bf_workspace/results/staircaseii
 [+] Running 2/2
