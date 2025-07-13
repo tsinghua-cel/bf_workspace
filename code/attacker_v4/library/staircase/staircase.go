@@ -18,6 +18,7 @@ func (o *Instance) Run(ctx context.Context, params types.LibraryParams, feedback
 	ticker := time.NewTicker(time.Second * 3)
 	attacker := params.Attacker
 	history := make(map[int]bool)
+	started := false
 	for {
 		select {
 		case <-ctx.Done():
@@ -51,27 +52,12 @@ func (o *Instance) Run(ctx context.Context, params types.LibraryParams, feedback
 					history[int(nextEpoch)] = true
 					continue
 				}
-				preDuties, err := attacker.GetEpochDuties(epoch - 1)
-				if err != nil {
-					log.WithFields(log.Fields{
-						"error": err,
-						"epoch": epoch - 1,
-					}).Error("failed to get pre duties")
-					continue
-				}
-				curDuties, err := attacker.GetEpochDuties(epoch)
-				if err != nil {
-					log.WithFields(log.Fields{
-						"error": err,
-						"epoch": epoch,
-					}).Error("failed to get cur duties")
-					continue
-				}
 				strategy := types.Strategy{}
-				if checkFirstByzSlot(preDuties, params) &&
-					checkFirstByzSlot(curDuties, params) &&
-					!checkFirstByzSlot(nextDuties, params) {
+				if started {
 					cas = 1
+					started = false
+				} else {
+					started = true
 				}
 				strategy.Uid = uuid.NewString()
 				strategy.Slots = GenSlotStrategy(params.FillterHackerDuties(nextDuties), cas)
