@@ -24,6 +24,7 @@ import (
 	"github.com/tsinghua-cel/attacker-service/library/three"
 	"github.com/tsinghua-cel/attacker-service/library/two"
 	"github.com/tsinghua-cel/attacker-service/library/unrealized"
+	"github.com/tsinghua-cel/attacker-service/library/unrealizedhonest"
 	"github.com/tsinghua-cel/attacker-service/library/withholding"
 	"github.com/tsinghua-cel/attacker-service/types"
 	"sync"
@@ -65,6 +66,7 @@ func Init() {
 	register(&none.Instance{})
 	register(&selfish.Instance{})
 	register(&selfishhonest.Instance{})
+	register(&unrealizedhonest.Instance{})
 }
 
 func register(ins Strategy) {
