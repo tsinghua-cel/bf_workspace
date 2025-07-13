@@ -120,6 +120,26 @@ services:
       meta:
         ipv4_address: 172.88.1.150
 
+  attacker2:
+    image: tscel/bunnyfinder:latest
+    entrypoint: attacker --config /root/config.toml --strategy sandwichhonest --max-hack-idx 85 --logpath /root/attackerdata/d.log --loglevel info
+    environment:
+      - NAME=attacker2
+
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 1s
+        max_attempts: 100
+        window: 120s
+    volumes:
+      - ${BASEDIR}./v5/config/attacker-config-2.toml:/root/config.toml
+      - ${BASEDIR}./v5/config/strategy-empty.json:/root/strategy.json
+      - ${BASEDIR}./data/attacker2:/root/attackerdata
+    networks:
+      meta:
+        ipv4_address: 172.88.1.151
+
   beacon1:
     image: tscel/bf.prysm:v5.2.0
     entrypoint: /usr/local/bin/beacon-node.sh
@@ -154,6 +174,7 @@ services:
       - EXECUTE=execute2
       - MAXPEERS=70
       - P2PKEY=9edcc99209261dfca0d5b79cd1ff43e2e30005c629337d921711bb77fa816dd3
+      - ATTACKER_SERVICE_URL=http://172.88.1.151:10000
 
     deploy:
       restart_policy:
@@ -179,6 +200,7 @@ services:
       - EXECUTE=execute3
       - MAXPEERS=70
       - P2PKEY=9513c7244d2983d47b54df161a3fc981b946944d7c2bba338588e0ab7dc40777
+      - ATTACKER_SERVICE_URL=http://172.88.1.151:10000
 
     deploy:
       restart_policy:
@@ -204,6 +226,7 @@ services:
       - EXECUTE=execute4
       - MAXPEERS=70
       - P2PKEY=c118a256c6aa383b0d02a6ac25139566bc042c837f248e71aa38fcd961dac8aa
+      - ATTACKER_SERVICE_URL=http://172.88.1.151:10000
 
     deploy:
       restart_policy:
@@ -229,6 +252,7 @@ services:
       - EXECUTE=execute5
       - MAXPEERS=70
       - P2PKEY=f01cd004ad47970f7ca62dadb1921a173c9686cf11e963c04d8a81f36322fd9f
+      - ATTACKER_SERVICE_URL=http://172.88.1.151:10000
 
     deploy:
       restart_policy:
@@ -278,6 +302,7 @@ services:
       - VALIDATORS_NUM=50
       - VALIDATORS_INDEX=86
       - BEACONRPC=beacon2:4000
+      - ATTACKER_SERVICE_URL=http://172.88.1.151:10000
 
     deploy:
       restart_policy:
@@ -302,6 +327,7 @@ services:
       - VALIDATORS_NUM=51
       - VALIDATORS_INDEX=136
       - BEACONRPC=beacon3:4000
+      - ATTACKER_SERVICE_URL=http://172.88.1.151:10000
 
     deploy:
       restart_policy:
@@ -326,6 +352,7 @@ services:
       - VALIDATORS_NUM=51
       - VALIDATORS_INDEX=187
       - BEACONRPC=beacon4:4000
+      - ATTACKER_SERVICE_URL=http://172.88.1.151:10000
 
     deploy:
       restart_policy:
@@ -350,6 +377,7 @@ services:
       - VALIDATORS_NUM=18
       - VALIDATORS_INDEX=238
       - BEACONRPC=beacon5:4000
+      - ATTACKER_SERVICE_URL=http://172.88.1.151:10000
 
     deploy:
       restart_policy:

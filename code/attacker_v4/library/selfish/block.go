@@ -2,6 +2,7 @@ package selfish
 
 import (
 	"fmt"
+	"github.com/tsinghua-cel/attacker-service/common"
 	"github.com/tsinghua-cel/attacker-service/types"
 )
 
@@ -21,6 +22,8 @@ func GenSlotStrategy(duties []interface{}) []types.SlotStrategy {
 			Actions: make(map[string]string),
 		}
 		s1.Actions["AttestBeforeSign"] = fmt.Sprintf("modifyAttestHead:%s", a.Slot)
+		s1.Actions["AttestBeforeBroadCast"] = fmt.Sprintf("delayWithSecond:%d", common.GetChainBaseInfo().SecondsPerSlot+2)
+		s1.Actions["BlockBeforeBroadCast"] = fmt.Sprintf("delayWithSecond:%d", common.GetChainBaseInfo().SecondsPerSlot+2)
 		strategys = append(strategys, s1)
 
 		s2 := types.SlotStrategy{
