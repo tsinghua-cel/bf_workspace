@@ -6,7 +6,6 @@ import (
 	"github.com/tsinghua-cel/attacker-service/beaconapi"
 	"github.com/tsinghua-cel/attacker-service/common"
 	"github.com/tsinghua-cel/attacker-service/dbmodel"
-	"strconv"
 	"time"
 )
 
@@ -35,12 +34,13 @@ func ScheduleAttestReward(interval time.Duration, url string) {
 }
 
 func GetAttestRewardsToMysql(o orm.Ormer, client *beaconapi.BeaconGwClient) error {
-	latestHeader, err := client.GetLatestBeaconHeader()
-	if err != nil {
-		return err
-	}
-
-	latestSlot, _ := strconv.ParseInt(latestHeader.Header.Message.Slot, 10, 64)
+	latestSlot := common.CurrentSlot()
+	//latestHeader, err := client.GetLatestBeaconHeader()
+	//if err != nil {
+	//	return err
+	//}
+	//
+	//latestSlot, _ := strconv.ParseInt(latestHeader.Header.Message.Slot, 10, 64)
 	curEpoch := common.SlotToEpoch(latestSlot)
 
 	if latestAttestRewardEpoch < 0 {

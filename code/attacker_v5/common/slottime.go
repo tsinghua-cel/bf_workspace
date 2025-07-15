@@ -1,6 +1,9 @@
 package common
 
-import "github.com/tsinghua-cel/attacker-service/types"
+import (
+	"github.com/tsinghua-cel/attacker-service/types"
+	"time"
+)
 
 type slotTimeTool struct {
 	SecondsPerSlot int
@@ -45,6 +48,14 @@ func EpochStart(epoch int64) int64 {
 
 func TimeToSlot(slot int64) int64 {
 	return tool.GenesisTime + int64(slot*int64(tool.SecondsPerSlot))
+}
+
+func CurrentSlot() int64 {
+	now := time.Now().Unix()
+	if now < tool.GenesisTime {
+		return 0
+	}
+	return (now - tool.GenesisTime) / int64(tool.SecondsPerSlot)
 }
 
 func GetChainBaseInfo() types.ChainBaseInfo {
