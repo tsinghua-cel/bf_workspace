@@ -6,7 +6,7 @@ export BASEDIR="$basedir/"
 
 allcase="none exante sandwich staircase unrealized withholding selfish staircase-ii pyrrhic-victory"
 
-echo "casetype is $casetype"
+#echo "casetype is $casetype"
 case $casetype in
         "none")
                 ./v5/runtest.sh $casetype 360
@@ -34,6 +34,9 @@ case $casetype in
                 ;;
         "pyrrhic-victory")
                 ./v5/runtest.sh sync 3600
+                ;;
+        "rl")
+                ./v5/runtest.sh rl
                 ;;
         *)
                 echo "unsupported casetype $casetype, supported cases are: $allcase"

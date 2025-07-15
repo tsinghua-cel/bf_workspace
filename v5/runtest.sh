@@ -61,6 +61,56 @@ teststrategy() {
         docker compose -f $casedir/mysql.yml down
 }
 
+testrl() {
+        # start mysql
+        docker compose -f $casedir/mysql.yml up -d
+	      testcasenocollect ext-staircase 3600
+	      # collect the results from mysql.
+	      resultA=$(sh $basedir/tool/query_best.sh)
+
+	      docker compose -f $casedir/mysql.yml down
+	      mv ${basedir}/database ${basedir}/results/ext-staircase/
+
+	      # start mysql
+	      docker compose -f $casedir/mysql.yml up -d
+	      testcasenocollect staircaseii 3600
+	      # collect the results from mysql.
+	      resultB=$(sh $basedir/tool/query_best.sh)
+
+	      docker compose -f $casedir/mysql.yml down
+	      mv ${basedir}/database ${basedir}/results/ext-staircase/
+
+	      # dump result.
+	      echo "Results for ext-staircase: $resultA"
+	      echo "Results for staircase-ii: $resultB"
+}
+
+testcasenocollect() {
+  docase=$1
+  caseduration=$2
+  targetdir="${casedir}/${docase}"
+  resultdir="${basedir}/results/${docase}"
+
+  if [ -d $resultdir ]; then
+    # backup the resultdir
+    echo "resultdir $resultdir exist, backup it to $resultdir-$(date +%Y%m%d%H%M%S)"
+    mv $resultdir $resultdir-$(date +%Y%m%d%H%M%S)
+  fi
+  mkdir -p $resultdir
+  echo "run strategy $docase"
+  updategenesis
+  file=$casedir/attack-$docase.yml
+  mysqlfile=$casedir/mysql.yml
+  project=$docase
+  echo "docker compose -p $project -f $file down" > /tmp/_stop.sh
+  echo "docker compose -f $mysqlfile down" >> /tmp/_stop.sh
+  docker compose -p $project -f $file up -d
+  echo "wait $caseduration seconds" && sleep $caseduration
+  docker compose -p $project -f $file down
+  sudo mv data $resultdir/data
+  echo "$docase test finished"
+}
+
 
 testattack() {
           casename=$1
@@ -123,6 +173,9 @@ case $casetype in
                 ;;
         "strategy")
                 teststrategy
+                ;;
+        "rl")
+                testrl
                 ;;
         *)
                 testattack $casetype $testduration
