@@ -12,7 +12,7 @@ set -e
 
 function queryBest() {
   SQL_COMMANDS=$(cat <<'SQL'
-  SELECT uuid, honest_lose_rate_avg, attacker_lose_rate_avg from t_strategy where is_end=1 and honest_lose_rate_avg > 0 and attacker_lose_rate_avg < 1 order by (honest_lose_rate_avg - attacker_lose_rate_avg) desc limit 1;
+  SELECT uuid, honest_lose_rate_avg, attacker_lose_rate_avg from t_strategy where is_end=1 and honest_lose_rate_avg > 0 and attacker_lose_rate_avg < 1 order by honest_lose_rate_avg desc limit 1;
 SQL
   )
 
