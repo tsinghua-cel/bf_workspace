@@ -284,6 +284,15 @@ mysql> SELECT uuid,category,honest_lose_rate_avg,attacker_lose_rate_avg FROM t_s
 +--------------------------------------+-----------------+----------------------+------------------------+
 ```
 
+### Experiment 4: RL  (E4)
+**Duration**: 30 human-minutes + 2 compute-hours
+
+Compare extend staircase attack with RL-optimized staircase attack.
+
+```bash
+./attack.sh rl
+```
+
 ## Support
 
 For questions about the artifact or research, please contact the authors through the paper submission system.
