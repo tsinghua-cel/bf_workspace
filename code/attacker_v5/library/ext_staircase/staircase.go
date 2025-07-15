@@ -24,9 +24,10 @@ func (o *Instance) Description() string {
 
 func (o *Instance) Run(ctx context.Context, params types.LibraryParams, feedbacker types.FeedBacker) {
 	log.WithField("name", o.Name()).Info("start to run strategy")
-	var latestEpoch int64 = -1
 	ticker := time.NewTicker(time.Second * 3)
 	attacker := params.Attacker
+	history := make(map[int]bool)
+	started := false
 	for {
 		select {
 		case <-ctx.Done():
@@ -34,61 +35,41 @@ func (o *Instance) Run(ctx context.Context, params types.LibraryParams, feedback
 			return
 		case <-ticker.C:
 			slot := attacker.GetCurSlot()
+			epoch := common.SlotToEpoch(int64(slot))
+			nextEpoch := epoch + 1
 			log.WithFields(log.Fields{
 				"slot":      slot,
-				"lastEpoch": latestEpoch,
+				"nextEpoch": nextEpoch,
 			}).Info("get slot")
-			epoch := common.SlotToEpoch(int64(slot))
-			// generate new strategy at the end of last epoch.
-			if int64(slot) < common.EpochEnd(epoch) {
-				continue
-			}
-			if epoch == latestEpoch {
-				continue
-			}
-			latestEpoch = epoch
 
-			{
-				nextEpoch := epoch + 1
+			if _, ok := history[int(nextEpoch)]; ok {
+				continue
+			}
+
+			if nextEpoch < 3 {
+				log.WithField("epoch", nextEpoch).Info("skip to generate strategy")
+				history[int(nextEpoch)] = true
+				continue
+			}
+			nextDuties, err := attacker.GetEpochDuties(nextEpoch)
+			if err != nil {
+				log.WithFields(log.Fields{
+					"error": err,
+					"epoch": nextEpoch,
+				}).Error("failed to get duties")
+				continue
+			}
+			if nextEpoch%10 < 7 {
 				cas := 0
-
-				nextDuties, err := attacker.GetEpochDuties(nextEpoch)
-				if err != nil {
-					log.WithFields(log.Fields{
-						"error": err,
-						"epoch": nextEpoch,
-					}).Error("failed to get duties")
-					latestEpoch = epoch - 1
-					continue
-				}
-				preDuties, err := attacker.GetEpochDuties(epoch - 1)
-				if err != nil {
-					log.WithFields(log.Fields{
-						"error": err,
-						"epoch": epoch - 1,
-					}).Error("failed to get duties")
-					latestEpoch = epoch - 1
-					continue
-				}
-				curDuties, err := attacker.GetEpochDuties(epoch)
-				if err != nil {
-					log.WithFields(log.Fields{
-						"error": err,
-						"epoch": epoch,
-					}).Error("failed to get duties")
-					latestEpoch = epoch - 1
-					continue
+				if started {
+					cas = 1
+					started = false
+				} else {
+					started = true
 				}
 				strategy := types.Strategy{}
 				strategy.Uid = uuid.NewString()
-
-				if checkFirstByzSlot(preDuties, params) &&
-					checkFirstByzSlot(curDuties, params) &&
-					!checkFirstByzSlot(nextDuties, params) {
-					cas = 1
-				}
-
-				strategy.Slots = GenSlotStrategy(params.FillterHackerDuties(nextDuties), cas, params.FillterHackerDuties(nextDuties))
+				strategy.Slots = GenSlotStrategy(nextDuties, params.FillterHackerDuties(nextDuties), cas)
 				strategy.Category = o.Name()
 				if err = attacker.UpdateStrategy(strategy); err != nil {
 					log.WithField("error", err).Error("failed to update strategy")
@@ -97,6 +78,24 @@ func (o *Instance) Run(ctx context.Context, params types.LibraryParams, feedback
 						"epoch":    nextEpoch,
 						"strategy": strategy,
 					}).Info("update strategy successfully")
+					history[int(nextEpoch)] = true
+				}
+			} else {
+				if started {
+					started = false
+				}
+				strategy := types.Strategy{}
+				strategy.Uid = uuid.NewString()
+				strategy.Slots = GenSlotStrategyOnB(nextDuties, params.FillterHackerDuties(nextDuties), nextEpoch)
+				strategy.Category = o.Name()
+				if err = attacker.UpdateStrategy(strategy); err != nil {
+					log.WithField("error", err).Error("failed to update strategy")
+				} else {
+					log.WithFields(log.Fields{
+						"epoch":    nextEpoch,
+						"strategy": strategy,
+					}).Info("update strategy successfully")
+					history[int(nextEpoch)] = true
 				}
 			}
 		}
