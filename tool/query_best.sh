@@ -1,5 +1,6 @@
 #!/bin/bash
-source .env.local
+basedir=${1:-$(pwd)}
+source $basedir/.env.local
 set -e
 
 # Verify environment variables (must be set by user)
