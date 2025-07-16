@@ -27,17 +27,13 @@ SQL
 #    echo "Best strategy UUID: $UUID"
 
     HONEST_LOSE_RATE_AVG=$(echo "$info" | awk '{print $2}' | awk '{printf "%.4f", $1 }')
-    # HONEST_LOSE_RATE_AVG = 1-HONEST_LOSE_RATE_AVG
-    HONEST_LOSE_RATE_AVG=$(echo "1 - $HONEST_LOSE_RATE_AVG" | bc)
 #    echo "Honest lose rate average: $HONEST_LOSE_RATE_AVG"
     HONEST_LOSE_RATE_ECHO=$(echo "$HONEST_LOSE_RATE_AVG" | awk '{printf "%.2f%%", $1 * 100}')
 #    echo "Honest lose rate echo: $HONEST_LOSE_RATE_ECHO"
 
 
     ATTACKER_LOSE_RATE_AVG=$(echo "$info" | awk '{print $3}' | awk '{printf "%.4f", $1 }')
-    # ATTACKER_LOSE_RATE_AVG = 1-ATTACKER_LOSE_RATE_AVG
-    ATTACKER_LOSE_RATE_AVG=$(echo "1 - $ATTACKER_LOSE_RATE_AVG" | bc)
-#    echo "Bazantine lose rate average: $ATTACKER_LOSE_RATE_AVG"
+    echo "Bazantine lose rate average: $ATTACKER_LOSE_RATE_AVG"
     ATTACKER_LOSE_RATE_ECHO=$(echo "$ATTACKER_LOSE_RATE_AVG" | awk '{printf "%.2f%%", $1 * 100}')
 #    echo "Bazantine lose rate echo: $ATTACKER_LOSE_RATE_ECHO"
 
@@ -60,7 +56,7 @@ SQL
 
 #    echo "Success rate: $SR"
 
-    byzantine_advantage=$(echo "$ATTACKER_LOSE_RATE_AVG - $HONEST_LOSE_RATE_AVG" | bc)
+    byzantine_advantage=$(echo "$HONEST_LOSE_RATE_AVG - $ATTACKER_LOSE_RATE_AVG" | bc)
     byzantine_advantage=$(echo "$byzantine_advantage" | awk '{printf "%.2f%%", $1*100 }')
 
 #    echo "Calculating byzantine advantage: $byzantine_advantage"
