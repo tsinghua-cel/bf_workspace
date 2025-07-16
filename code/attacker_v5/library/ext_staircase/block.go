@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/tsinghua-cel/attacker-service/common"
 	"github.com/tsinghua-cel/attacker-service/types"
+	"math/rand"
 	"strconv"
 )
 
@@ -25,17 +26,21 @@ func getSlotStrategy(slot string, cas int, isLatestHackSlot bool) types.SlotStra
 		if isLatestHackSlot {
 			islot, _ := strconv.Atoi(slot)
 			stageI := (slotsPerEpoch - islot%slotsPerEpoch) * secondsPerSlot
-			stageII := 12 * secondsPerSlot
+			stageII := secondsPerSlot * (1 + rand.Intn(slotsPerEpoch*2))
 
 			strategy.Actions["AttestBeforeSign"] = fmt.Sprintf("return")
-
 			strategy.Actions["BlockBeforeSign"] = "packPooledAttest"
 			strategy.Actions["BlockDelayForReceiveBlock"] = fmt.Sprintf("%s:%d", "delayWithSecond", stageI)
 			strategy.Actions["BlockBeforeBroadCast"] = fmt.Sprintf("%s:%d", "delayWithSecond", stageII)
 		} else {
 			strategy.Actions["BlockBeforeSign"] = "return"
 			strategy.Actions["AttestAfterSign"] = fmt.Sprintf("addAttestToPool")
-			strategy.Actions["AttestBeforePropose"] = fmt.Sprintf("return")
+			p := rand.Intn(3)
+			if p == 1 {
+				strategy.Actions["AttestBeforePropose"] = fmt.Sprintf("return")
+			} else {
+				strategy.Actions["AttestBeforeBroadCast"] = fmt.Sprintf("return")
+			}
 		}
 	}
 	return strategy

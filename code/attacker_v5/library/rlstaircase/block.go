@@ -1,4 +1,4 @@
-package ext_staircase
+package rlstaircase
 
 import (
 	"fmt"
@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-func getSlotStrategyOnb(epoch int64, slot string, isLatestHackDuty bool) types.SlotStrategy {
+func getSlotStrategy(epoch int64, slot string, isLatestHackDuty bool) types.SlotStrategy {
 	strategy := types.SlotStrategy{
 		Slot:    slot,
 		Level:   0,
@@ -25,17 +25,13 @@ func getSlotStrategyOnb(epoch int64, slot string, isLatestHackDuty bool) types.S
 		if isLatestHackDuty {
 			strategy.Level = 1
 
-			stageI := (slotsPerEpoch/2 + slotsPerEpoch) * secondPerSlot
-			//islot, _ := strconv.Atoi(slot)
-			//stageI := (slotsPerEpoch - islot%slotsPerEpoch) * secondPerSlot
-			//stageII := (32 + 30) * secondPerSlot
+			stageI := (slotsPerEpoch) * secondPerSlot
 
 			strategy.Actions["AttestBeforeSign"] = fmt.Sprintf("return")
 
 			strategy.Actions["BlockBeforeSign"] = "packPooledAttest"
 			strategy.Actions["BlockDelayForReceiveBlock"] = fmt.Sprintf("%s:%d", "delayWithSecond", stageI)
 			strategy.Actions["BlockBeforeBroadCast"] = fmt.Sprintf("%s", "delayHalfEpoch")
-			//strategy.Actions["BlockBeforeBroadCast"] = fmt.Sprintf("%s:%d", "delayWithSecond", stageII)
 
 		} else {
 			strategy.Actions["BlockBeforeSign"] = "return"
@@ -46,14 +42,14 @@ func getSlotStrategyOnb(epoch int64, slot string, isLatestHackDuty bool) types.S
 	return strategy
 }
 
-func GenSlotStrategyOnB(allDuties []types.ProposerDuty, hackerDuties []types.ProposerDuty, epoch int64) []types.SlotStrategy {
+func GenSlotStrategy(allDuties []types.ProposerDuty, epoch int64) []types.SlotStrategy {
 	strategys := make([]types.SlotStrategy, 0)
-	latestDuty := hackerDuties[len(hackerDuties)-1]
+	latestDuty := allDuties[len(allDuties)-1]
 	laytestDutySlot, _ := strconv.Atoi(latestDuty.Slot)
 	epochStart := common.EpochStart(epoch)
 	epochEnd := common.EpochEnd(epoch)
 	for i := epochStart; i <= epochEnd; i++ {
-		s := getSlotStrategyOnb(epoch, strconv.Itoa(int(i)), i == int64(laytestDutySlot))
+		s := getSlotStrategy(epoch, strconv.Itoa(int(i)), i == int64(laytestDutySlot))
 		strategys = append(strategys, s)
 	}
 	return strategys

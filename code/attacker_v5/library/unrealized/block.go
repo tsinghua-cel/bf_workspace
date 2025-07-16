@@ -19,5 +19,4 @@ func GenSlotStrategy(duties []interface{}) []types.SlotStrategy {
 	strategys = append(strategys, slotStrategy)
 
 	return strategys
-
 }

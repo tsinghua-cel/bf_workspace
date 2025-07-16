@@ -1,4 +1,4 @@
-package ext_staircase
+package rlstaircase
 
 import (
 	"context"
@@ -6,7 +6,6 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/tsinghua-cel/attacker-service/common"
 	"github.com/tsinghua-cel/attacker-service/types"
-	"strconv"
 	"time"
 )
 
@@ -14,11 +13,11 @@ type Instance struct {
 }
 
 func (o *Instance) Name() string {
-	return "ext_staircase"
+	return "rlstaircase"
 }
 
 func (o *Instance) Description() string {
-	desc_eng := `Extended staircase attack`
+	desc_eng := `RL-optimized staircase attack.`
 	return desc_eng
 }
 
@@ -27,7 +26,6 @@ func (o *Instance) Run(ctx context.Context, params types.LibraryParams, feedback
 	ticker := time.NewTicker(time.Second * 3)
 	attacker := params.Attacker
 	history := make(map[int]bool)
-	started := false
 	for {
 		select {
 		case <-ctx.Done():
@@ -46,30 +44,23 @@ func (o *Instance) Run(ctx context.Context, params types.LibraryParams, feedback
 				continue
 			}
 
-			if nextEpoch < 3 {
-				log.WithField("epoch", nextEpoch).Info("skip to generate strategy")
-				history[int(nextEpoch)] = true
-				continue
-			}
-			nextDuties, err := attacker.GetEpochDuties(nextEpoch)
-			if err != nil {
-				log.WithFields(log.Fields{
-					"error": err,
-					"epoch": nextEpoch,
-				}).Error("failed to get duties")
-				continue
-			}
 			{
-				cas := 0
-				if started {
-					cas = 1
-					started = false
-				} else {
-					started = true
+				duties, err := attacker.GetEpochDuties(nextEpoch)
+				if err != nil {
+					log.WithFields(log.Fields{
+						"error": err,
+						"epoch": nextEpoch,
+					}).Error("failed to get duties")
+					continue
+				}
+				if nextEpoch < 3 {
+					log.WithField("epoch", nextEpoch).Info("skip to generate strategy")
+					history[int(nextEpoch)] = true
+					continue
 				}
 				strategy := types.Strategy{}
 				strategy.Uid = uuid.NewString()
-				strategy.Slots = GenSlotStrategy(nextDuties, params.FillterHackerDuties(nextDuties), cas)
+				strategy.Slots = GenSlotStrategy(params.FillterHackerDuties(duties), nextEpoch)
 				strategy.Category = o.Name()
 				if err = attacker.UpdateStrategy(strategy); err != nil {
 					log.WithField("error", err).Error("failed to update strategy")
@@ -83,28 +74,4 @@ func (o *Instance) Run(ctx context.Context, params types.LibraryParams, feedback
 			}
 		}
 	}
-}
-
-func getLatestHackerSlot(duties []types.ProposerDuty, param types.LibraryParams) int {
-	latest, _ := strconv.Atoi(duties[0].Slot)
-	for _, duty := range duties {
-		idx, _ := strconv.Atoi(duty.ValidatorIndex)
-		slot, _ := strconv.Atoi(duty.Slot)
-		if !param.IsHackValidator(idx) {
-			continue
-		}
-		if slot > latest {
-			latest = slot
-		}
-	}
-	return latest
-
-}
-
-func checkFirstByzSlot(duties []types.ProposerDuty, param types.LibraryParams) bool {
-	firstproposerindex, _ := strconv.Atoi(duties[0].ValidatorIndex)
-	if !param.IsHackValidator(firstproposerindex) {
-		return false
-	}
-	return true
 }
