@@ -33,7 +33,7 @@ SQL
 
 
     ATTACKER_LOSE_RATE_AVG=$(echo "$info" | awk '{print $3}' | awk '{printf "%.4f", $1 }')
-    echo "Bazantine lose rate average: $ATTACKER_LOSE_RATE_AVG"
+#    echo "Bazantine lose rate average: $ATTACKER_LOSE_RATE_AVG"
     ATTACKER_LOSE_RATE_ECHO=$(echo "$ATTACKER_LOSE_RATE_AVG" | awk '{printf "%.2f%%", $1 * 100}')
 #    echo "Bazantine lose rate echo: $ATTACKER_LOSE_RATE_ECHO"
 
