@@ -66,23 +66,23 @@ testrl() {
         docker compose -f $casedir/mysql.yml up -d
 	      testcasenocollect ext-staircase 3600
 	      # collect the results from mysql.
-	      resultA=$(sh $basedir/tool/query_best.sh $basedir)
+	      resultA=$(bash $basedir/tool/query_best.sh $basedir)
 
 	      docker compose -f $casedir/mysql.yml down
 	      sudo mv ${basedir}/database ${basedir}/results/ext-staircase/
 
 	      # start mysql
 	      docker compose -f $casedir/mysql.yml up -d
-	      testcasenocollect staircaseii 3600
+	      testcasenocollect rlstaircase 3600
 	      # collect the results from mysql.
-	      resultB=$(sh $basedir/tool/query_best.sh $basedir)
+	      resultB=$(bash $basedir/tool/query_best.sh $basedir)
 
 	      docker compose -f $casedir/mysql.yml down
-	      sudo mv ${basedir}/database ${basedir}/results/staircaseii/
+	      sudo mv ${basedir}/database ${basedir}/results/rlstaircase/
 
 	      # dump result.
 	      echo "Results for ext-staircase: $resultA"
-	      echo "Results for staircase-ii: $resultB"
+	      echo "Results for rl-staircase: $resultB"
 }
 
 testcasenocollect() {
