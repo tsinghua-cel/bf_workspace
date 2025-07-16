@@ -35,12 +35,7 @@ func getSlotStrategy(slot string, cas int, isLatestHackSlot bool) types.SlotStra
 		} else {
 			strategy.Actions["BlockBeforeSign"] = "return"
 			strategy.Actions["AttestAfterSign"] = fmt.Sprintf("addAttestToPool")
-			p := rand.Intn(3)
-			if p == 1 {
-				strategy.Actions["AttestBeforePropose"] = fmt.Sprintf("return")
-			} else {
-				strategy.Actions["AttestBeforeBroadCast"] = fmt.Sprintf("return")
-			}
+			strategy.Actions["AttestBeforePropose"] = fmt.Sprintf("return")
 		}
 	}
 	return strategy
