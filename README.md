@@ -293,7 +293,7 @@ Compare extend staircase attack with RL-optimized staircase attack.
 ./attack.sh rl
 ```
 
-Expect Results:
+Expect Results: After completion, the system outputs the honest validators' lose rate, the Byzantine validators' lose rate, Byzantine validators' advantage, and the success rate, both before and after reinforcement learning optimization.
 ```txt
 casetype is rl
 ...
@@ -319,8 +319,6 @@ casetype is rl
 Results for ext-staircase: honest lose rate: 14.23%, byzantine lose rate: 26.53%, byzantine advantage: -12.30% , success rate: 20.00%
 Results for rl-staircase: honest lose rate: 18.79%, byzantine lose rate: 13.51%, byzantine advantage: 5.28% , success rate: 45.00%
 ```
-
-After completion, the system outputs the honest validators' lose rate, the Byzantine validators' lose rate, Byzantine validators' advantage, and the success rate, both before and after reinforcement learning optimization. 
 
 ## Support
 
