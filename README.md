@@ -293,6 +293,35 @@ Compare extend staircase attack with RL-optimized staircase attack.
 ./attack.sh rl
 ```
 
+Expect Results:
+```txt
+casetype is rl
+...
+[+] Running 17/17
+ ✔ Container rlstaircase-validator5-1  Removed                                                                                                 11.6s 
+ ✔ Container rlstaircase-validator1-1  Removed                                                                                                 12.0s 
+ ✔ Container rlstaircase-validator2-1  Removed                                                                                                 12.2s 
+ ✔ Container rlstaircase-attacker1-1   Removed                                                                                                  0.5s 
+ ✔ Container rlstaircase-validator4-1  Removed                                                                                                 11.2s 
+ ✔ Container rlstaircase-validator3-1  Removed                                                                                                 11.8s 
+ ✔ Container rlstaircase-beacon4-1     Removed                                                                                                 10.6s 
+ ✔ Container rlstaircase-beacon5-1     Removed                                                                                                 10.8s 
+ ✔ Container rlstaircase-beacon3-1     Removed                                                                                                 10.7s 
+ ✔ Container rlstaircase-beacon1-1     Removed                                                                                                 11.1s 
+ ✔ Container rlstaircase-beacon2-1     Removed                                                                                                 11.1s 
+ ✔ Container rlstaircase-execute4-1    Removed                                                                                                 10.4s 
+ ✔ Container rlstaircase-execute5-1    Removed                                                                                                 10.7s 
+ ✔ Container rlstaircase-execute3-1    Removed                                                                                                 10.7s 
+ ✔ Container rlstaircase-execute1-1    Removed                                                                                                 10.9s 
+ ✔ Container rlstaircase-execute2-1    Removed                                                                                                 11.0s 
+ ✔ Network rlstaircase_meta            Removed                                                                                                  0.6s 
+... 
+Results for ext-staircase: honest lose rate: 14.23%, byzantine lose rate: 26.53%, byzantine advantage: -12.30% , success rate: 20.00%
+Results for rl-staircase: honest lose rate: 18.79%, byzantine lose rate: 13.51%, byzantine advantage: 5.28% , success rate: 45.00%
+```
+
+After completion, the system outputs the honest validators' lose rate, the Byzantine validators' lose rate, Byzantine validators' advantage, and the success rate, both before and after reinforcement learning optimization. 
+
 ## Support
 
 For questions about the artifact or research, please contact the authors through the paper submission system.
