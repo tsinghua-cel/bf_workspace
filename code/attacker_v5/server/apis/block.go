@@ -138,20 +138,17 @@ func (s *BlockAPI) todoActionsWithSignedBlock(slot uint64, pubkey string, signed
 				"slot":  slot,
 				"point": name,
 			}).Debug("find action")
-			//block, err := common.GetDenebBlockFromGenericSignedBlock()
-			//if err != nil {
-			//	log.WithError(err).WithField("slot", slot).Error("get block instance failed")
-			//	return result
-			//}
 			r := action.RunAction(s.b, int64(slot), pubkey, signedDenebBlock)
 			result.Cmd = r.Cmd
-			if newBlockBase64, err := common.SignedDenebBlockToBase64(signedDenebBlock); err != nil {
-				log.WithError(err).WithFields(log.Fields{
-					"slot":   slot,
-					"action": name,
-				}).Error("marshal to block failed")
-			} else {
-				result.Result = newBlockBase64
+			if signedDenebBlock != nil {
+				if newBlockBase64, err := common.SignedDenebBlockToBase64(signedDenebBlock); err != nil {
+					log.WithError(err).WithFields(log.Fields{
+						"slot":   slot,
+						"action": name,
+					}).Error("marshal to block failed")
+				} else {
+					result.Result = newBlockBase64
+				}
 			}
 		} else {
 			log.WithFields(log.Fields{

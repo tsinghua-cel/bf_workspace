@@ -105,7 +105,6 @@ func GetFunctionAction(backend types.ServiceBackend, actions string) (ActionDo, 
 		}, nil
 	case "addAttestToPool":
 		return func(backend types.ServiceBackend, slot int64, pubkey string, params ...interface{}) plugins.PluginResponse {
-			var attestation *ethpb.Attestation
 			r := plugins.PluginResponse{
 				Cmd: types.CMD_NULL,
 			}
@@ -114,17 +113,17 @@ func GetFunctionAction(backend types.ServiceBackend, actions string) (ActionDo, 
 				"action": name,
 			}).Debug("do action ")
 
-			if len(params) > 0 {
-				attestation = params[0].(*ethpb.Attestation)
-				backend.AddAttestToPool(uint64(slot), pubkey, attestation)
-				r.Result = attestation
+			if len(params) > 0 && params[0] != nil {
+				if att, ok := params[0].(*ethpb.Attestation); ok {
+					backend.AddAttestToPool(uint64(slot), pubkey, att)
+					r.Result = att
+				}
 			}
 
 			return r
 		}, nil
 	case "storeSignedAttest":
 		return func(backend types.ServiceBackend, slot int64, pubkey string, params ...interface{}) plugins.PluginResponse {
-			var attestation *ethpb.Attestation
 			r := plugins.PluginResponse{
 				Cmd: types.CMD_NULL,
 			}
@@ -133,10 +132,11 @@ func GetFunctionAction(backend types.ServiceBackend, actions string) (ActionDo, 
 				"action": name,
 			}).Info("do action ")
 
-			if len(params) > 0 {
-				attestation = params[0].(*ethpb.Attestation)
-				backend.AddSignedAttestation(uint64(slot), pubkey, attestation)
-				r.Result = attestation
+			if len(params) > 0 && params[0] != nil {
+				if att, ok := params[0].(*ethpb.Attestation); ok {
+					backend.AddSignedAttestation(uint64(slot), pubkey, att)
+					r.Result = att
+				}
 			}
 
 			return r
@@ -402,7 +402,7 @@ func GetFunctionAction(backend types.ServiceBackend, actions string) (ActionDo, 
 				"action": name,
 			}).Info("do action ")
 
-			if len(params) == 0 {
+			if len(params) == 0 || params[0] == nil {
 				return r
 			}
 			block, ok := params[0].(*ethpb.SignedBeaconBlockCapella)
@@ -476,7 +476,6 @@ func GetFunctionAction(backend types.ServiceBackend, actions string) (ActionDo, 
 		}
 		newSourceSlot := params[0]
 		return func(backend types.ServiceBackend, slot int64, pubkey string, params ...interface{}) plugins.PluginResponse {
-			var attestation *ethpb.AttestationData
 			r := plugins.PluginResponse{
 				Cmd: types.CMD_NULL,
 			}
@@ -487,12 +486,13 @@ func GetFunctionAction(backend types.ServiceBackend, actions string) (ActionDo, 
 				"newSourceSlot": newSourceSlot,
 			}).Debug("do action ")
 
-			if len(params) > 0 {
-				attestation = params[0].(*ethpb.AttestationData)
-				if root, err := backend.GetSlotRoot(int64(newSourceSlot)); err == nil {
-					attestation.Source.Root = common.FromHex(root)
-					if r.Result, err = common.AttestationDataToBase64(attestation); err == nil {
-						r.Cmd = types.CMD_UPDATE_STATE
+			if len(params) > 0 && params[0] != nil {
+				if att, ok := params[0].(*ethpb.AttestationData); ok {
+					if root, err := backend.GetSlotRoot(int64(newSourceSlot)); err == nil {
+						att.Source.Root = common.FromHex(root)
+						if r.Result, err = common.AttestationDataToBase64(att); err == nil {
+							r.Cmd = types.CMD_UPDATE_STATE
+						}
 					}
 				}
 			}
@@ -506,7 +506,6 @@ func GetFunctionAction(backend types.ServiceBackend, actions string) (ActionDo, 
 		}
 		newTargetSlot := params[0]
 		return func(backend types.ServiceBackend, slot int64, pubkey string, params ...interface{}) plugins.PluginResponse {
-			var attestation *ethpb.AttestationData
 			r := plugins.PluginResponse{
 				Cmd: types.CMD_NULL,
 			}
@@ -517,12 +516,13 @@ func GetFunctionAction(backend types.ServiceBackend, actions string) (ActionDo, 
 				"newTargetSlot": newTargetSlot,
 			}).Debug("do action ")
 
-			if len(params) > 0 {
-				attestation = params[0].(*ethpb.AttestationData)
-				if root, err := backend.GetSlotRoot(int64(newTargetSlot)); err == nil {
-					attestation.Target.Root = common.FromHex(root)
-					if r.Result, err = common.AttestationDataToBase64(attestation); err == nil {
-						r.Cmd = types.CMD_UPDATE_STATE
+			if len(params) > 0 && params[0] != nil {
+				if att, ok := params[0].(*ethpb.AttestationData); ok {
+					if root, err := backend.GetSlotRoot(int64(newTargetSlot)); err == nil {
+						att.Target.Root = common.FromHex(root)
+						if r.Result, err = common.AttestationDataToBase64(att); err == nil {
+							r.Cmd = types.CMD_UPDATE_STATE
+						}
 					}
 				}
 			}
@@ -536,7 +536,6 @@ func GetFunctionAction(backend types.ServiceBackend, actions string) (ActionDo, 
 		}
 		newHeadSlot := params[0]
 		return func(backend types.ServiceBackend, slot int64, pubkey string, params ...interface{}) plugins.PluginResponse {
-			var attestation *ethpb.AttestationData
 			r := plugins.PluginResponse{
 				Cmd: types.CMD_NULL,
 			}
@@ -547,12 +546,13 @@ func GetFunctionAction(backend types.ServiceBackend, actions string) (ActionDo, 
 				"newHeadSlot": newHeadSlot,
 			}).Debug("do action ")
 
-			if len(params) > 0 {
-				attestation = params[0].(*ethpb.AttestationData)
-				if root, err := backend.GetSlotRoot(int64(newHeadSlot)); err == nil {
-					attestation.BeaconBlockRoot = common.FromHex(root)
-					if r.Result, err = common.AttestationDataToBase64(attestation); err == nil {
-						r.Cmd = types.CMD_UPDATE_STATE
+			if len(params) > 0 && params[0] != nil {
+				if att, ok := params[0].(*ethpb.AttestationData); ok {
+					if root, err := backend.GetSlotRoot(int64(newHeadSlot)); err == nil {
+						att.BeaconBlockRoot = common.FromHex(root)
+						if r.Result, err = common.AttestationDataToBase64(att); err == nil {
+							r.Cmd = types.CMD_UPDATE_STATE
+						}
 					}
 				}
 			}

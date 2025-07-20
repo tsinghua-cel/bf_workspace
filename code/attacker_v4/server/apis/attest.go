@@ -106,12 +106,13 @@ func (s *AttestAPI) BeforeSign(slot uint64, pubkey string, attestDataBase64 stri
 		if action != nil {
 			r := action.RunAction(s.b, int64(slot), pubkey, attestation)
 			result.Cmd = r.Cmd
-			newAttestation, ok := r.Result.(*ethpb.AttestationData)
-			if ok {
-				if newData, err := common.AttestationDataToBase64(newAttestation); err == nil {
-					result.Result = newData
+			if r.Result != nil {
+				newAttestation, ok := r.Result.(*ethpb.AttestationData)
+				if ok {
+					if newData, err := common.AttestationDataToBase64(newAttestation); err == nil {
+						result.Result = newData
+					}
 				}
-
 			}
 		}
 	}
@@ -131,8 +132,10 @@ func (s *AttestAPI) AfterSign(slot uint64, pubkey string, signedAttestDataBase64
 			Result: signedAttestDataBase64,
 		}
 	}
-	// default action: add attestation to pool.
-	s.b.AddAttestToPool(slot, pubkey, signedAttestData)
+	if signedAttestData != nil {
+		// default action: add attestation to pool.
+		s.b.AddAttestToPool(slot, pubkey, signedAttestData)
+	}
 
 	result := types.AttackerResponse{
 		Cmd:    types.CMD_NULL,
@@ -144,12 +147,13 @@ func (s *AttestAPI) AfterSign(slot uint64, pubkey string, signedAttestDataBase64
 		if action != nil {
 			r := action.RunAction(s.b, int64(slot), pubkey, signedAttestData)
 			result.Cmd = r.Cmd
-			newAttestation, ok := r.Result.(*ethpb.Attestation)
-			if ok {
-				if newData, err := common.SignedAttestationToBase64(newAttestation); err == nil {
-					result.Result = newData
+			if r.Result != nil {
+				newAttestation, ok := r.Result.(*ethpb.Attestation)
+				if ok {
+					if newData, err := common.SignedAttestationToBase64(newAttestation); err == nil {
+						result.Result = newData
+					}
 				}
-
 			}
 		}
 	}
@@ -179,12 +183,13 @@ func (s *AttestAPI) BeforePropose(slot uint64, pubkey string, signedAttestDataBa
 		if action != nil {
 			r := action.RunAction(s.b, int64(slot), pubkey, signedAttest)
 			result.Cmd = r.Cmd
-			newAttestation, ok := r.Result.(*ethpb.Attestation)
-			if ok {
-				if newData, err := common.SignedAttestationToBase64(newAttestation); err == nil {
-					result.Result = newData
+			if r.Result != nil {
+				newAttestation, ok := r.Result.(*ethpb.Attestation)
+				if ok {
+					if newData, err := common.SignedAttestationToBase64(newAttestation); err == nil {
+						result.Result = newData
+					}
 				}
-
 			}
 		}
 	}
@@ -214,12 +219,13 @@ func (s *AttestAPI) AfterPropose(slot uint64, pubkey string, signedAttestDataBas
 		if action != nil {
 			r := action.RunAction(s.b, int64(slot), pubkey, signedAttest)
 			result.Cmd = r.Cmd
-			newAttestation, ok := r.Result.(*ethpb.Attestation)
-			if ok {
-				if newData, err := common.SignedAttestationToBase64(newAttestation); err == nil {
-					result.Result = newData
+			if r.Result != nil {
+				newAttestation, ok := r.Result.(*ethpb.Attestation)
+				if ok {
+					if newData, err := common.SignedAttestationToBase64(newAttestation); err == nil {
+						result.Result = newData
+					}
 				}
-
 			}
 		}
 	}

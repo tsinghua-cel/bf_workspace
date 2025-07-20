@@ -14,6 +14,9 @@ var (
 )
 
 func Base64ToAttestationData(attestDataBase64 string) (*ethpb.AttestationData, error) {
+	if attestDataBase64 == "" {
+		return nil, nil
+	}
 	attestData, err := base64.StdEncoding.DecodeString(attestDataBase64)
 	if err != nil {
 		log.WithError(err).Error("base64 decode attest data failed")
@@ -37,6 +40,9 @@ func AttestationDataToBase64(attestation *ethpb.AttestationData) (string, error)
 }
 
 func Base64ToSignedAttestation(signedAttestDataBase64 string) (*ethpb.Attestation, error) {
+	if signedAttestDataBase64 == "" {
+		return nil, nil
+	}
 	signedAttestData, err := base64.StdEncoding.DecodeString(signedAttestDataBase64)
 	if err != nil {
 		log.WithError(err).Error("base64 decode signed attest data failed")
@@ -60,6 +66,9 @@ func SignedAttestationToBase64(signedAttestation *ethpb.Attestation) (string, er
 }
 
 func Base64ToSignedDenebBlock(signedBlockBase64 string) (*ethpb.SignedBeaconBlockDeneb, error) {
+	if signedBlockBase64 == "" {
+		return nil, nil
+	}
 	signedBlockData, err := base64.StdEncoding.DecodeString(signedBlockBase64)
 	if err != nil {
 		log.WithError(err).Error("base64 decode signed block data failed")
@@ -83,6 +92,9 @@ func SignedDenebBlockToBase64(signedBlock *ethpb.SignedBeaconBlockDeneb) (string
 }
 
 func Base64ToGenericSignedBlock(signedBlockBase64 string) (*ethpb.GenericSignedBeaconBlock, error) {
+	if signedBlockBase64 == "" {
+		return nil, nil
+	}
 	signedBlockData, err := base64.StdEncoding.DecodeString(signedBlockBase64)
 	if err != nil {
 		log.WithError(err).Error("base64 decode signed block data failed")
