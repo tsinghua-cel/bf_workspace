@@ -1,0 +1,54 @@
+{
+  "get" : {
+    "tags" : [ "Node" ],
+    "operationId" : "getHealth",
+    "summary" : "Get health check",
+    "description" : "Returns node health status in http status codes. Useful for load balancers.",
+    "parameters" : [ {
+      "name" : "syncing_status",
+      "in" : "query",
+      "schema" : {
+        "type" : "number",
+        "description" : "Customize syncing status instead of default status code (206)"
+      }
+    } ],
+    "responses" : {
+      "200" : {
+        "description" : "Node is ready",
+        "content" : { }
+      },
+      "204" : {
+        "description" : "Data is unavailable because the chain has not yet reached genesis",
+        "content" : { }
+      },
+      "206" : {
+        "description" : "Node is syncing but can serve incomplete data",
+        "content" : { }
+      },
+      "503" : {
+        "description" : "Node not initialized or having issues",
+        "content" : { }
+      },
+      "400" : {
+        "description" : "Invalid syncing status code",
+        "content" : {
+          "application/json" : {
+            "schema" : {
+              "$ref" : "#/components/schemas/HttpErrorResponse"
+            }
+          }
+        }
+      },
+      "500" : {
+        "description" : "Internal server error",
+        "content" : {
+          "application/json" : {
+            "schema" : {
+              "$ref" : "#/components/schemas/HttpErrorResponse"
+            }
+          }
+        }
+      }
+    }
+  }
+}

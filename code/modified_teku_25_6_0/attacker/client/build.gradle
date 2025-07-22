@@ -1,0 +1,17 @@
+//jar { enabled = true }
+dependencies {
+  implementation project(':infrastructure:async')
+  implementation 'com.github.briandilley.jsonrpc4j:jsonrpc4j:1.7'
+  implementation 'com.fasterxml.jackson.core:jackson-annotations:2.15.2'
+}
+// attacker/client/build.gradle
+publishing {
+  publications {
+    mavenJava(MavenPublication) {
+      groupId = 'tech.pegasys.teku.attacker'
+      artifactId = 'client'
+      version = '1.0.0'
+    }
+  }
+}
+description = 'Teku Attacker Client'
