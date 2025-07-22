@@ -5,6 +5,7 @@ import (
 	"github.com/prysmaticlabs/prysm/v5/cache/lru"
 	log "github.com/sirupsen/logrus"
 	"github.com/tsinghua-cel/attacker-service/common"
+	"github.com/tsinghua-cel/attacker-service/plugins"
 	"github.com/tsinghua-cel/attacker-service/types"
 	"time"
 )
@@ -138,7 +139,12 @@ func (s *BlockAPI) todoActionsWithSignedBlock(slot uint64, pubkey string, signed
 				"slot":  slot,
 				"point": name,
 			}).Debug("find action")
-			r := action.RunAction(s.b, int64(slot), pubkey, signedDenebBlock)
+			var r plugins.PluginResponse
+			if signedDenebBlock == nil {
+				r = action.RunAction(s.b, int64(slot), pubkey)
+			} else {
+				r = action.RunAction(s.b, int64(slot), pubkey, signedDenebBlock)
+			}
 			result.Cmd = r.Cmd
 			if signedDenebBlock != nil {
 				if newBlockBase64, err := common.SignedDenebBlockToBase64(signedDenebBlock); err != nil {

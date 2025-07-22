@@ -4,6 +4,7 @@ import (
 	ethpb "github.com/prysmaticlabs/prysm/v5/proto/prysm/v1alpha1"
 	log "github.com/sirupsen/logrus"
 	"github.com/tsinghua-cel/attacker-service/common"
+	"github.com/tsinghua-cel/attacker-service/plugins"
 	"github.com/tsinghua-cel/attacker-service/strategy/slotstrategy"
 	"github.com/tsinghua-cel/attacker-service/types"
 )
@@ -104,7 +105,13 @@ func (s *AttestAPI) BeforeSign(slot uint64, pubkey string, attestDataBase64 stri
 	if st, find := findMaxLevelStrategy(s.b.GetInternalSlotStrategy(), int64(slot)); find {
 		action := st.Actions["AttestBeforeSign"]
 		if action != nil {
-			r := action.RunAction(s.b, int64(slot), pubkey, attestation)
+			var r plugins.PluginResponse
+			if attestation == nil {
+				r = action.RunAction(s.b, int64(slot), pubkey)
+			} else {
+				r = action.RunAction(s.b, int64(slot), pubkey, attestation)
+			}
+
 			result.Cmd = r.Cmd
 			if r.Result != nil {
 				newAttestation, ok := r.Result.(*ethpb.AttestationData)
@@ -145,7 +152,12 @@ func (s *AttestAPI) AfterSign(slot uint64, pubkey string, signedAttestDataBase64
 	if t, find := findMaxLevelStrategy(s.b.GetInternalSlotStrategy(), int64(slot)); find {
 		action := t.Actions["AttestAfterSign"]
 		if action != nil {
-			r := action.RunAction(s.b, int64(slot), pubkey, signedAttestData)
+			var r plugins.PluginResponse
+			if signedAttestData == nil {
+				r = action.RunAction(s.b, int64(slot), pubkey)
+			} else {
+				r = action.RunAction(s.b, int64(slot), pubkey, signedAttestData)
+			}
 			result.Cmd = r.Cmd
 			if r.Result != nil {
 				newAttestation, ok := r.Result.(*ethpb.Attestation)
@@ -181,7 +193,12 @@ func (s *AttestAPI) BeforePropose(slot uint64, pubkey string, signedAttestDataBa
 	if t, find := findMaxLevelStrategy(s.b.GetInternalSlotStrategy(), int64(slot)); find {
 		action := t.Actions["AttestBeforePropose"]
 		if action != nil {
-			r := action.RunAction(s.b, int64(slot), pubkey, signedAttest)
+			var r plugins.PluginResponse
+			if signedAttest == nil {
+				r = action.RunAction(s.b, int64(slot), pubkey)
+			} else {
+				r = action.RunAction(s.b, int64(slot), pubkey, signedAttest)
+			}
 			result.Cmd = r.Cmd
 			if r.Result != nil {
 				newAttestation, ok := r.Result.(*ethpb.Attestation)
@@ -217,7 +234,12 @@ func (s *AttestAPI) AfterPropose(slot uint64, pubkey string, signedAttestDataBas
 	if t, find := findMaxLevelStrategy(s.b.GetInternalSlotStrategy(), int64(slot)); find {
 		action := t.Actions["AttestAfterPropose"]
 		if action != nil {
-			r := action.RunAction(s.b, int64(slot), pubkey, signedAttest)
+			var r plugins.PluginResponse
+			if signedAttest == nil {
+				r = action.RunAction(s.b, int64(slot), pubkey)
+			} else {
+				r = action.RunAction(s.b, int64(slot), pubkey, signedAttest)
+			}
 			result.Cmd = r.Cmd
 			if r.Result != nil {
 				newAttestation, ok := r.Result.(*ethpb.Attestation)
