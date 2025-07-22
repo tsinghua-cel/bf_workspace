@@ -38,6 +38,9 @@ case $casetype in
         "rl")
                 ./v5/runtest.sh rl
                 ;;
+        "teku")
+                ./v5/runtest.sh teku
+                ;;
         *)
                 echo "unsupported casetype $casetype, supported cases are: $allcase"
                 ;;

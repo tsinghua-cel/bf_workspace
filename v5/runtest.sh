@@ -166,6 +166,22 @@ testcase() {
   echo "test finished and all nodes data in $resultdir"
 }
 
+testteku() {
+        # start mysql
+        docker compose -f $casedir/mysql.yml up -d
+        kurtosis clean -a > /dev/null 2>&1
+        echo "run exante strategy on teku"
+        kurtosis run --enclave tekutest github.com/ethpandaops/ethereum-package --args-file $casedir/teku.yaml > /dev/null 2>&1
+        echo "wait 3600 seconds for the test to finish"
+	      sleep 3600
+	      echo "test finished, collect results"
+	      # collect reorg event.
+	      kurtosis service logs -a tekutest cl-3-teku-geth  | grep Reorg
+	      kurtosis clean -a > /dev/null 2>&1
+	      docker compose -f $casedir/mysql.yml down
+}
+
+
 echo "casetype is $casetype"
 case $casetype in
         "normal")
@@ -173,6 +189,9 @@ case $casetype in
                 ;;
         "strategy")
                 teststrategy
+                ;;
+        "teku")
+                testteku
                 ;;
         "rl")
                 testrl
