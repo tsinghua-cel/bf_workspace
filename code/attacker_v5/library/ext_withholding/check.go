@@ -15,13 +15,13 @@ func CheckDuties(param types.LibraryParams, duties []types.ProposerDuty) ([]inte
 		if param.IsHackValidator(valIdx) {
 			tmpsub = append(tmpsub, duty)
 		} else {
-			if len(tmpsub) > 5 {
+			if len(tmpsub) > 3 {
 				result = append(result, tmpsub)
 			}
 			tmpsub = make([]types.ProposerDuty, 0)
 		}
 	}
-	if len(tmpsub) > 5 {
+	if len(tmpsub) > 3 {
 		result = append(result, tmpsub)
 	}
 

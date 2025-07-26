@@ -16,6 +16,7 @@ func BlockStrategy(cur, end int, actions map[string]string) {
 	endStage += slotsPerEpoch * utils.SafeRand(2) / utils.SafeRand(4) // add half epoch.
 	point := types.GetPointByName("BlockBeforeBroadCast")
 	actions[point] = fmt.Sprintf("%s:%d", "delayWithSecond", endStage*secondsPerSlot)
+	actions[string(types.AttestBeforePropose)] = fmt.Sprintf("return")
 }
 
 func GenSlotStrategy(allHacks []interface{}, fullHackDuties []types.ProposerDuty) []types.SlotStrategy {
@@ -53,7 +54,7 @@ func GenSlotStrategy(allHacks []interface{}, fullHackDuties []types.ProposerDuty
 			Level:   1,
 			Actions: make(map[string]string),
 		}
-		strategy.Actions = utils.GetRandomActions(slot, utils.SafeRand(4))
+		strategy.Actions = utils.GetRandomActions(slot, 3)
 		strategys = append(strategys, strategy)
 	}
 
