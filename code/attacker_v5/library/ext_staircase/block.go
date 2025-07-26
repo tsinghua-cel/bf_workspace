@@ -8,30 +8,38 @@ import (
 	"strconv"
 )
 
-func getSlotStrategy(slot string, cas int, isLatestHackSlot bool) types.SlotStrategy {
+func getSlotStrategy(epoch int64, slot string, isLatestHackDuty bool) types.SlotStrategy {
 	strategy := types.SlotStrategy{
 		Slot:    slot,
 		Level:   0,
 		Actions: make(map[string]string),
 	}
-	base := common.GetChainBaseInfo()
-	secondsPerSlot := base.SecondsPerSlot
-	slotsPerEpoch := base.SlotsPerEpoch
-	switch cas {
-	case 0:
+	secondPerSlot := common.GetChainBaseInfo().SecondsPerSlot
+	slotsPerEpoch := common.GetChainBaseInfo().SlotsPerEpoch
+	switch epoch%3 + 1 {
+	case 1, 3:
 		strategy.Actions["BlockBeforeSign"] = "return"
 		strategy.Actions["AttestBeforeSign"] = fmt.Sprintf("return")
+		return strategy
 
-	case 1:
-		if isLatestHackSlot {
-			islot, _ := strconv.Atoi(slot)
-			stageI := (slotsPerEpoch - islot%slotsPerEpoch) * secondsPerSlot
-			stageII := secondsPerSlot * (1 + rand.Intn(slotsPerEpoch*2))
+	case 2:
+		if isLatestHackDuty {
+			strategy.Level = 1
+
+			stageI := rand.Intn(slotsPerEpoch)
+			stageII := (slotsPerEpoch) * secondPerSlot
+
+			//islot, _ := strconv.Atoi(slot)
+			//stageI := (slotsPerEpoch - islot%slotsPerEpoch) * secondPerSlot
+			//stageII := (32 + 30) * secondPerSlot
 
 			strategy.Actions["AttestBeforeSign"] = fmt.Sprintf("return")
+
 			strategy.Actions["BlockBeforeSign"] = "packPooledAttest"
 			strategy.Actions["BlockDelayForReceiveBlock"] = fmt.Sprintf("%s:%d", "delayWithSecond", stageI)
+			//strategy.Actions["BlockBeforeBroadCast"] = fmt.Sprintf("%s", "delayHalfEpoch")
 			strategy.Actions["BlockBeforeBroadCast"] = fmt.Sprintf("%s:%d", "delayWithSecond", stageII)
+
 		} else {
 			strategy.Actions["BlockBeforeSign"] = "return"
 			strategy.Actions["AttestAfterSign"] = fmt.Sprintf("addAttestToPool")
@@ -39,14 +47,16 @@ func getSlotStrategy(slot string, cas int, isLatestHackSlot bool) types.SlotStra
 		}
 	}
 	return strategy
-
 }
 
-func GenSlotStrategy(duties []types.ProposerDuty, hackduties []types.ProposerDuty, cas int) []types.SlotStrategy {
+func GenSlotStrategy(allDuties []types.ProposerDuty, epoch int64) []types.SlotStrategy {
 	strategys := make([]types.SlotStrategy, 0)
-	for i := 0; i < len(duties); i++ {
-		duty := duties[i]
-		s := getSlotStrategy(duty.Slot, cas, duty.Slot == hackduties[len(hackduties)-1].Slot)
+	latestDuty := allDuties[len(allDuties)-1]
+	laytestDutySlot, _ := strconv.Atoi(latestDuty.Slot)
+	epochStart := common.EpochStart(epoch)
+	epochEnd := common.EpochEnd(epoch)
+	for i := epochStart; i <= epochEnd; i++ {
+		s := getSlotStrategy(epoch, strconv.Itoa(int(i)), i == int64(laytestDutySlot))
 		strategys = append(strategys, s)
 	}
 	return strategys
