@@ -7,6 +7,7 @@ This repository contains the implementation for our paper "BunnyFinder: Finding 
 - Implementation code for BunnyFinder
 
 - Two versions of the [Prysm](https://github.com/OffchainLabs/prysm) client (v4.0.5 and v5.2.0) with injection points
+- [Teku-v25.6.0](https://github.com/Consensys/teku/tree/25.6.0) client with injection points
 - Experimental datasets and results from our paper
 
 ## Ethical Considerations
@@ -36,7 +37,8 @@ Our experiments require:
 - Ubuntu 22.04 or later
 - Docker Engine version 24.0.6 or higher 
 - docker-compose plugin
-- Kurtosis framework (optional)
+- Kurtosis CLI (optional)
+- Java 21+ (optional)
 
 Installation instructions are available in the [official Docker documentation](https://docs.docker.com/engine/install/)
 
