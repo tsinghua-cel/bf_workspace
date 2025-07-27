@@ -443,15 +443,22 @@ func (b *BeaconGwClient) MonitorReorgEvent() chan *apiv1.ChainReorgEvent {
 	}
 	ch := make(chan *apiv1.ChainReorgEvent, 100)
 	go func() {
-		service.(eth2client.EventsProvider).Events(context.Background(), []string{"chain_reorg"}, func(event *apiv1.Event) {
-			if ev, ok := event.Data.(*apiv1.ChainReorgEvent); !ok {
-				log.Error("Failed to unmarshal reorg event")
+		opts := &api.EventsOpts{
+			Topics: []string{"chain_reorg"},
+			Handler: func(event *apiv1.Event) {
+				if ev, ok := event.Data.(*apiv1.ChainReorgEvent); !ok {
+					log.Error("Failed to unmarshal reorg event")
+					return
+				} else {
+					ch <- ev
+				}
 				return
-			} else {
-				ch <- ev
-			}
+			},
+		}
+		if err := service.(eth2client.EventsProvider).Events(context.Background(), opts); err != nil {
+			log.WithError(err).Error("subscribe to chain reorg event failed")
 			return
-		})
+		}
 	}()
 	return ch
 }
