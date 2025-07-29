@@ -563,8 +563,8 @@ func (vs *Server) broadcastReceiveBlock(ctx context.Context, block interfaces.Si
 		end2 := time.Now()
 		log.WithFields(logrus.Fields{
 			"slot":         block.Block().Slot(),
-			"marshalSSZ":   end1.Sub(start).Milliseconds(),
-			"unmarshalSSZ": end2.Sub(end1).Milliseconds(),
+			"marshalSSZ":   end1.Sub(start).Microseconds(),
+			"unmarshalSSZ": end2.Sub(end1).Microseconds(),
 		}).Info("ssz marshal and unmarshal time")
 	}
 
