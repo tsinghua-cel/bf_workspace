@@ -98,11 +98,11 @@ func (n *Node) updateBestDescendant(ctx context.Context, justifiedEpoch, finaliz
 // the ones in fork choice store should not be viable to head.
 func (n *Node) viableForHead(justifiedEpoch, currentEpoch primitives.Epoch) bool {
 	justified := justifiedEpoch == n.justifiedEpoch || justifiedEpoch == 0
-	//if !justified && justifiedEpoch+1 == currentEpoch {
-	//	if n.unrealizedJustifiedEpoch+1 >= currentEpoch && n.justifiedEpoch+2 >= currentEpoch {
-	//		justified = true
-	//	}
-	//}
+	if !justified && justifiedEpoch+1 == currentEpoch {
+		if n.unrealizedJustifiedEpoch+1 >= currentEpoch && n.justifiedEpoch+2 >= currentEpoch {
+			justified = true
+		}
+	}
 	return justified
 }
 
