@@ -17,7 +17,7 @@ func GenSlotStrategy(duties []interface{}) []types.SlotStrategy {
 	currentslot, _ := strconv.Atoi(duty[0].Slot)
 	begin := currentslot - 10
 	// all honest proposer block broadcast delay to currentslot.
-	for i := 0; i < 10; i++ {
+	for i := 1; i < 10; i++ {
 
 		slotStrategy := types.SlotStrategy{
 			Slot:    fmt.Sprintf("%d", begin+i),

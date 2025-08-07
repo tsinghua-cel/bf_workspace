@@ -23,9 +23,9 @@ func (o *Instance) Description() string {
 
 func (o *Instance) Run(ctx context.Context, params types.LibraryParams, feedbacker types.FeedBacker) {
 	log.WithField("name", o.Name()).Info("start to run strategy")
-	var latestEpoch int64 = -1
-	ticker := time.NewTicker(time.Second * 3)
 	attacker := params.Attacker
+	history := make(map[int]bool)
+	ticker := time.NewTicker(time.Second * 3)
 	for {
 		select {
 		case <-ctx.Done():
@@ -34,21 +34,22 @@ func (o *Instance) Run(ctx context.Context, params types.LibraryParams, feedback
 		case <-ticker.C:
 			slot := attacker.GetCurSlot()
 			epoch := common.SlotToEpoch(int64(slot))
-			if epoch == latestEpoch {
+			nextEpoch := epoch + 1
+			log.WithFields(log.Fields{
+				"slot":      slot,
+				"nextEpoch": nextEpoch,
+			}).Info("get slot")
+
+			if _, ok := history[int(nextEpoch)]; ok {
 				continue
 			}
-			if (int64(slot) + 5) < common.EpochEnd(epoch) {
-				continue
-			}
-			latestEpoch = epoch
 			// get next epoch duties
-			duties, err := attacker.GetEpochDuties(epoch + 1)
+			duties, err := attacker.GetEpochDuties(nextEpoch)
 			if err != nil {
 				log.WithFields(log.Fields{
 					"error": err,
-					"epoch": epoch + 1,
-				}).Error("failed to get duties")
-				latestEpoch = epoch - 1
+					"epoch": nextEpoch,
+				}).Error("failed to get next duties")
 				continue
 			}
 			if hackDuties, happen := CheckDuties(params, duties); happen {
@@ -60,10 +61,13 @@ func (o *Instance) Run(ctx context.Context, params types.LibraryParams, feedback
 					log.WithField("error", err).Error("failed to update strategy")
 				} else {
 					log.WithFields(log.Fields{
-						"epoch":    epoch + 1,
+						"epoch":    nextEpoch,
 						"strategy": strategy,
 					}).Info("update strategy successfully")
+					history[int(nextEpoch)] = true
 				}
+			} else {
+				history[int(nextEpoch)] = true
 			}
 		}
 	}

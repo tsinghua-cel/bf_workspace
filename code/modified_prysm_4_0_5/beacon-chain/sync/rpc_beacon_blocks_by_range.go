@@ -2,6 +2,7 @@ package sync
 
 import (
 	"context"
+	"github.com/prysmaticlabs/prysm/v4/attacker"
 	"time"
 
 	libp2pcore "github.com/libp2p/go-libp2p/core"
@@ -25,6 +26,10 @@ func (s *Service) beaconBlocksByRangeRPCHandler(ctx context.Context, msg interfa
 	ctx, cancel := context.WithTimeout(ctx, respTimeout)
 	defer cancel()
 	SetRPCStreamDeadlines(stream)
+
+	if attacker.GetAttacker() != nil {
+		return errors.New("blocks by range is disabled by attacker")
+	}
 
 	// Ticker to stagger out large requests.
 	ticker := time.NewTicker(time.Second)

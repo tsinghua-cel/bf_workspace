@@ -2,6 +2,7 @@ package sync
 
 import (
 	"context"
+	"github.com/prysmaticlabs/prysm/v4/attacker"
 
 	libp2pcore "github.com/libp2p/go-libp2p/core"
 	"github.com/libp2p/go-libp2p/core/peer"
@@ -40,6 +41,9 @@ func (s *Service) beaconBlocksRootRPCHandler(ctx context.Context, msg interface{
 	defer cancel()
 	SetRPCStreamDeadlines(stream)
 	log := log.WithField("handler", "beacon_blocks_by_root")
+	if attacker.GetAttacker() != nil {
+		return errors.New("blocks by root is disabled by attacker")
+	}
 
 	rawMsg, ok := msg.(*types.BeaconBlockByRootsReq)
 	if !ok {
