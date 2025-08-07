@@ -13,10 +13,14 @@ func calcTargetTime(slot int, targetSlot int64, offset int) int64 {
 
 func BlockStrategy(cur, start, end int, actions map[string]string) {
 	// delay block to next epoch + 3 slots.
-	targetSlot := common.EpochEnd(common.SlotToEpoch(int64(cur))) + 3
+	targetSlot := common.EpochEnd(common.SlotToEpoch(int64(cur))) + 2
 	targetTime := calcTargetTime(cur, targetSlot, cur-start)
+	// don't broadcast block.
 	actions["BlockBeforeBroadCast"] = fmt.Sprintf("delayToMilliTime:%d", targetTime)
+	// don't broadcast attestation.
+	actions["AttestBeforePropose"] = fmt.Sprintf("return")
 }
+
 func GenSlotStrategy(allHacks []interface{}) []types.SlotStrategy {
 	if len(allHacks) == 0 {
 		return nil
