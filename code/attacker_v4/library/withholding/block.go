@@ -17,8 +17,13 @@ func BlockStrategy(cur, start, end int, actions map[string]string) {
 	targetTime := calcTargetTime(cur, targetSlot, cur-start)
 	// don't broadcast block.
 	actions["BlockBeforeBroadCast"] = fmt.Sprintf("delayToMilliTime:%d", targetTime)
+	actions["AttestAfterSign"] = "addAttestToPool"
 	// don't broadcast attestation.
 	actions["AttestBeforePropose"] = fmt.Sprintf("return")
+	if cur == end {
+		// pack all attestations.
+		actions["BlockBeforeSign"] = "packPooledAttest"
+	}
 }
 
 func GenSlotStrategy(allHacks []interface{}) []types.SlotStrategy {
