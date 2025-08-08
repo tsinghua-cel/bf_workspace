@@ -395,7 +395,7 @@ func GetFunctionAction(backend types.ServiceBackend, actions string) (ActionDo, 
 				Cmd: types.CMD_NULL,
 			}
 			epoch := common.SlotToEpoch(slot)
-			minSlot := common.EpochStart(epoch)
+			minSlot := common.EpochStart(epoch - 1)
 			maxSlot := common.EpochEnd(epoch)
 			log.WithFields(log.Fields{
 				"slot":   slot,
