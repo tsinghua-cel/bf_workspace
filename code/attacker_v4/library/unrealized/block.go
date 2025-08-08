@@ -7,17 +7,40 @@ import (
 )
 
 func GenSlotStrategy(duties []interface{}) []types.SlotStrategy {
-	strategys := make([]types.SlotStrategy, 0)
+	strategies := make([]types.SlotStrategy, 0)
 	duty := duties[0].([]types.ProposerDuty)
-	slotStrategy := types.SlotStrategy{
-		Slot:    fmt.Sprintf("%s", duty[0].Slot),
-		Level:   1,
-		Actions: make(map[string]string),
-	}
-	currentslot, _ := strconv.Atoi(duty[0].Slot)
-	slotStrategy.Actions["BlockGetNewParentRoot"] = fmt.Sprintf("modifyParentRoot:%d", currentslot-10)
-	strategys = append(strategys, slotStrategy)
 
-	return strategys
+	frontCount := 10
+	currentslot, _ := strconv.Atoi(duty[0].Slot)
+	start := currentslot - frontCount
+	for i := 1; i < frontCount; i++ {
+		slot := start + i
+		slotStrategy := types.SlotStrategy{
+			Slot:    fmt.Sprintf("%d", slot),
+			Level:   1,
+			Actions: make(map[string]string),
+		}
+		// not generate new block.
+		slotStrategy.Actions["BlockBeforeSign"] = "return"
+		// don't broadcast attestations.
+		slotStrategy.Actions["AttestBeforePropose"] = "return"
+		// add attestations to pool.
+		slotStrategy.Actions["AttestAfterSign"] = "addAttestToPool"
+		strategies = append(strategies, slotStrategy)
+	}
+	{
+		slotStrategy := types.SlotStrategy{
+			Slot:    fmt.Sprintf("%d", currentslot),
+			Level:   1,
+			Actions: make(map[string]string),
+		}
+		// pack all attestation.
+		slotStrategy.Actions["BlockBeforeSign"] = "packPooledAttest"
+		// modify parent root to old slot.
+		slotStrategy.Actions["BlockGetNewParentRoot"] = fmt.Sprintf("modifyParentRoot:%d", start)
+		strategies = append(strategies, slotStrategy)
+	}
+
+	return strategies
 
 }
