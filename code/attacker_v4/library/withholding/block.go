@@ -8,7 +8,7 @@ import (
 )
 
 func calcTargetTime(slot int, targetSlot int64, offset int) int64 {
-	return common.TimeToSlot(targetSlot)*1000 - 3*1000 + 100*int64(offset)
+	return common.TimeToSlot(targetSlot)*1000 - 2*1000 + 100*int64(offset)
 }
 
 func BlockStrategy(cur, start, end int, actions map[string]string) {

@@ -16,7 +16,7 @@ func CheckDuties(param types.LibraryParams, duties []types.ProposerDuty) ([]inte
 		if param.IsHackValidator(valIdx) {
 			tmpsub = append(tmpsub, duty)
 		} else {
-			if len(tmpsub) >= 3 {
+			if len(tmpsub) >= 2 {
 				// if the latest slot is epochEnd, add it to response.
 				latest, _ := strconv.Atoi(tmpsub[len(tmpsub)-1].Slot)
 				if int64(latest) == (common.EpochEnd(common.SlotToEpoch(int64(latest)))) {
@@ -26,7 +26,7 @@ func CheckDuties(param types.LibraryParams, duties []types.ProposerDuty) ([]inte
 			tmpsub = make([]types.ProposerDuty, 0)
 		}
 	}
-	if len(tmpsub) > 5 {
+	if len(tmpsub) >= 2 {
 		result = append(result, tmpsub)
 	}
 
