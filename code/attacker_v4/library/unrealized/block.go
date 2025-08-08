@@ -10,7 +10,7 @@ func GenSlotStrategy(duties []interface{}) []types.SlotStrategy {
 	strategies := make([]types.SlotStrategy, 0)
 	duty := duties[0].([]types.ProposerDuty)
 
-	frontCount := 20
+	frontCount := 8
 	currentslot, _ := strconv.Atoi(duty[0].Slot)
 	start := currentslot - frontCount
 	for i := 1; i < frontCount; i++ {
