@@ -29,15 +29,15 @@ func GenSlotStrategy(duties []interface{}) []types.SlotStrategy {
 		slotStrategy.Actions["BlockBeforeBroadCast"] = fmt.Sprintf("delayToMilliTime:%d", targetTime)
 		strategys = append(strategys, slotStrategy)
 	}
-	{
-		slotStrategy := types.SlotStrategy{
-			Slot:    fmt.Sprintf("%d", currentslot+1),
-			Level:   1,
-			Actions: make(map[string]string),
-		}
-		slotStrategy.Actions["BlockGetNewParentRoot"] = fmt.Sprintf("modifyParentRoot:%d", currentslot)
-		strategys = append(strategys, slotStrategy)
-	}
+	//{
+	//	slotStrategy := types.SlotStrategy{
+	//		Slot:    fmt.Sprintf("%d", currentslot+1),
+	//		Level:   1,
+	//		Actions: make(map[string]string),
+	//	}
+	//	slotStrategy.Actions["BlockGetNewParentRoot"] = fmt.Sprintf("modifyParentRoot:%d", currentslot)
+	//	strategys = append(strategys, slotStrategy)
+	//}
 
 	return strategys
 

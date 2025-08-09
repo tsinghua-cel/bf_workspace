@@ -13,21 +13,21 @@ func GenSlotStrategy(duties []interface{}) []types.SlotStrategy {
 	frontCount := 8
 	currentslot, _ := strconv.Atoi(duty[0].Slot)
 	start := currentslot - frontCount
-	for i := 1; i < frontCount; i++ {
-		slot := start + i
-		slotStrategy := types.SlotStrategy{
-			Slot:    fmt.Sprintf("%d", slot),
-			Level:   1,
-			Actions: make(map[string]string),
-		}
-		// not generate new block.
-		slotStrategy.Actions["BlockBeforeSign"] = "return"
-		// don't broadcast attestations.
-		slotStrategy.Actions["AttestBeforePropose"] = "return"
-		// add attestations to pool.
-		slotStrategy.Actions["AttestAfterSign"] = "addAttestToPool"
-		strategies = append(strategies, slotStrategy)
-	}
+	//for i := 1; i < frontCount; i++ {
+	//	slot := start + i
+	//	slotStrategy := types.SlotStrategy{
+	//		Slot:    fmt.Sprintf("%d", slot),
+	//		Level:   1,
+	//		Actions: make(map[string]string),
+	//	}
+	//	// not generate new block.
+	//	slotStrategy.Actions["BlockBeforeSign"] = "return"
+	//	// don't broadcast attestations.
+	//	slotStrategy.Actions["AttestBeforePropose"] = "return"
+	//	// add attestations to pool.
+	//	slotStrategy.Actions["AttestAfterSign"] = "addAttestToPool"
+	//	strategies = append(strategies, slotStrategy)
+	//}
 	{
 		slotStrategy := types.SlotStrategy{
 			Slot:    fmt.Sprintf("%d", currentslot),
@@ -40,15 +40,15 @@ func GenSlotStrategy(duties []interface{}) []types.SlotStrategy {
 		slotStrategy.Actions["BlockGetNewParentRoot"] = fmt.Sprintf("modifyParentRoot:%d", start)
 		strategies = append(strategies, slotStrategy)
 	}
-	{
-		slotStrategy := types.SlotStrategy{
-			Slot:    fmt.Sprintf("%d", currentslot+1),
-			Level:   1,
-			Actions: make(map[string]string),
-		}
-		slotStrategy.Actions["BlockGetNewParentRoot"] = fmt.Sprintf("modifyParentRoot:%d", currentslot)
-		strategies = append(strategies, slotStrategy)
-	}
+	//{
+	//	slotStrategy := types.SlotStrategy{
+	//		Slot:    fmt.Sprintf("%d", currentslot+1),
+	//		Level:   1,
+	//		Actions: make(map[string]string),
+	//	}
+	//	slotStrategy.Actions["BlockGetNewParentRoot"] = fmt.Sprintf("modifyParentRoot:%d", currentslot)
+	//	strategies = append(strategies, slotStrategy)
+	//}
 
 	return strategies
 
