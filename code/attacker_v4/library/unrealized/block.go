@@ -40,6 +40,15 @@ func GenSlotStrategy(duties []interface{}) []types.SlotStrategy {
 		slotStrategy.Actions["BlockGetNewParentRoot"] = fmt.Sprintf("modifyParentRoot:%d", start)
 		strategies = append(strategies, slotStrategy)
 	}
+	{
+		slotStrategy := types.SlotStrategy{
+			Slot:    fmt.Sprintf("%d", currentslot+1),
+			Level:   1,
+			Actions: make(map[string]string),
+		}
+		slotStrategy.Actions["BlockGetNewParentRoot"] = fmt.Sprintf("modifyParentRoot:%d", currentslot)
+		strategies = append(strategies, slotStrategy)
+	}
 
 	return strategies
 
