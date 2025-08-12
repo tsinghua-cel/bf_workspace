@@ -2,6 +2,7 @@ package unrealized
 
 import (
 	"fmt"
+	"github.com/tsinghua-cel/attacker-service/common"
 	"github.com/tsinghua-cel/attacker-service/types"
 	"strconv"
 )
@@ -10,7 +11,7 @@ func GenSlotStrategy(duties []interface{}) []types.SlotStrategy {
 	strategies := make([]types.SlotStrategy, 0)
 	duty := duties[0].([]types.ProposerDuty)
 
-	frontCount := 8
+	frontCount := 6
 	currentslot, _ := strconv.Atoi(duty[0].Slot)
 	start := currentslot - frontCount
 	//for i := 1; i < frontCount; i++ {
@@ -35,9 +36,11 @@ func GenSlotStrategy(duties []interface{}) []types.SlotStrategy {
 			Actions: make(map[string]string),
 		}
 		// pack all attestation.
-		slotStrategy.Actions["BlockBeforeSign"] = "packPooledAttest"
+		//slotStrategy.Actions["BlockBeforeSign"] = "packPooledAttest"
 		// modify parent root to old slot.
 		slotStrategy.Actions["BlockGetNewParentRoot"] = fmt.Sprintf("modifyParentRoot:%d", start)
+		// delay to broadcast block.
+		slotStrategy.Actions["BlockBeforeBroadCast"] = fmt.Sprintf("delayWithSecond:%d", 2*common.GetChainBaseInfo().SecondsPerSlot)
 		strategies = append(strategies, slotStrategy)
 	}
 	//{

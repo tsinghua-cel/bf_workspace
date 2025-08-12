@@ -15,7 +15,7 @@ func GenSlotStrategy(duties []interface{}) []types.SlotStrategy {
 	strategys := make([]types.SlotStrategy, 0)
 	duty := duties[0].([]types.ProposerDuty)
 	currentslot, _ := strconv.Atoi(duty[0].Slot)
-	frontCount := 8
+	frontCount := 6
 	begin := currentslot - frontCount
 	// all honest proposer block broadcast delay to currentslot.
 	for i := 1; i < frontCount; i++ {
@@ -25,8 +25,8 @@ func GenSlotStrategy(duties []interface{}) []types.SlotStrategy {
 			Level:   1,
 			Actions: make(map[string]string),
 		}
-		targetTime := calcTargetTime(begin+i, int64(currentslot+2), i)
-		slotStrategy.Actions["BlockBeforeBroadCast"] = fmt.Sprintf("delayToMilliTime:%d", targetTime)
+		//targetTime := calcTargetTime(begin+i, int64(currentslot+2), i)
+		//slotStrategy.Actions["BlockBeforeBroadCast"] = fmt.Sprintf("delayToMilliTime:%d", targetTime)
 		strategys = append(strategys, slotStrategy)
 	}
 	//{
