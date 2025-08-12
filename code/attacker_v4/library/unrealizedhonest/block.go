@@ -25,7 +25,7 @@ func GenSlotStrategy(duties []interface{}) []types.SlotStrategy {
 			Level:   1,
 			Actions: make(map[string]string),
 		}
-		targetTime := calcTargetTime(begin+i, int64(currentslot), i)
+		targetTime := calcTargetTime(begin+i, int64(currentslot+2), i)
 		slotStrategy.Actions["BlockBeforeBroadCast"] = fmt.Sprintf("delayToMilliTime:%d", targetTime)
 		strategys = append(strategys, slotStrategy)
 	}
