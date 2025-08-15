@@ -2,6 +2,7 @@ package doublylinkedtree
 
 import (
 	"context"
+	"github.com/sirupsen/logrus"
 
 	"github.com/pkg/errors"
 	"github.com/prysmaticlabs/prysm/v4/beacon-chain/core/epoch/precompute"
@@ -45,6 +46,11 @@ func (f *ForkChoice) updateUnrealizedCheckpoints(ctx context.Context) error {
 		node.justifiedEpoch = node.unrealizedJustifiedEpoch
 		node.finalizedEpoch = node.unrealizedFinalizedEpoch
 		if node.justifiedEpoch > f.store.justifiedCheckpoint.Epoch {
+			log.WithFields(logrus.Fields{
+				"node_slot":               node.slot,
+				"prev_justified_ch":       f.store.prevJustifiedCheckpoint,
+				"unrealized_justified_ch": f.store.unrealizedJustifiedCheckpoint,
+			}).Debug("updating justified checkpoint")
 			f.store.prevJustifiedCheckpoint = f.store.justifiedCheckpoint
 			f.store.justifiedCheckpoint = f.store.unrealizedJustifiedCheckpoint
 			if err := f.updateJustifiedBalances(ctx, f.store.justifiedCheckpoint.Root); err != nil {
@@ -52,6 +58,11 @@ func (f *ForkChoice) updateUnrealizedCheckpoints(ctx context.Context) error {
 			}
 		}
 		if node.finalizedEpoch > f.store.finalizedCheckpoint.Epoch {
+			log.WithFields(logrus.Fields{
+				"node_slot":               node.slot,
+				"prev_finalized_ch":       f.store.finalizedCheckpoint,
+				"unrealized_finalized_ch": f.store.unrealizedFinalizedCheckpoint,
+			}).Debug("updating finalized checkpoint")
 			f.store.finalizedCheckpoint = f.store.unrealizedFinalizedCheckpoint
 		}
 	}
