@@ -152,6 +152,15 @@ Reproduce five known incentive attacks:
 ./attack.sh staircase
 ```
 
+#### Withholding Attack (Prysm 4.0.5)
+```bash
+./attack.sh withholding
+```
+![WithholdingAttack](experiment/withholding/reorg.jpg)
+
+Tips: The probability of triggering the withholding attack is very low, requiring at least 10 hours. The data obtained from our experiments is stored in the `./experiment/withholding` directory for direct access.
+
+
 **Expected Results**: After completion, you should see output indicating reorganized blocks, confirming successful attack reproduction:
 
 ```console
