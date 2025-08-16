@@ -1,0 +1,14 @@
+
+services:
+  ethmysql:
+    image: "mysql:9.3.0"
+    environment:
+      - MYSQL_ROOT_PASSWORD=12345678
+    restart: always
+    privileged: true
+    ports:
+      - "3306:3306"
+    volumes:
+      - /etc/localtime:/etc/localtime
+      - ./withholding/database/data:/var/lib/mysql
+      - ./my.cnf:/etc/my.cnf
