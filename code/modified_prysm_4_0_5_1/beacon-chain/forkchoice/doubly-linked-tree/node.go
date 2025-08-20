@@ -3,12 +3,12 @@ package doublylinkedtree
 import (
 	"bytes"
 	"context"
-
 	"github.com/pkg/errors"
 	"github.com/prysmaticlabs/prysm/v4/config/params"
 	"github.com/prysmaticlabs/prysm/v4/consensus-types/primitives"
 	v1 "github.com/prysmaticlabs/prysm/v4/proto/eth/v1"
 	"github.com/prysmaticlabs/prysm/v4/time/slots"
+	"github.com/sirupsen/logrus"
 )
 
 // orphanLateBlockFirstThreshold is the number of seconds after which we
@@ -103,7 +103,15 @@ func (n *Node) viableForHead(justifiedEpoch, currentEpoch primitives.Epoch) bool
 	//		justified = true
 	//	}
 	//}
+	if justified {
+		log.WithFields(logrus.Fields{
+			"slot":           n.slot,
+			"bestDescendant": n.bestDescendant.slot,
+			"currentEpoch":   currentEpoch,
+		}).Debug("checking whether to viable for head")
+	}
 	justified = justified && slots.ToEpoch(n.bestDescendant.slot) == currentEpoch
+
 	return justified
 }
 
