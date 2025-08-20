@@ -9,6 +9,7 @@ import (
 	"github.com/prysmaticlabs/prysm/v4/config/params"
 	ethpb "github.com/prysmaticlabs/prysm/v4/proto/prysm/v1alpha1"
 	"github.com/prysmaticlabs/prysm/v4/time/slots"
+	log "github.com/sirupsen/logrus"
 )
 
 var errNilState = errors.New("nil state")
@@ -30,6 +31,17 @@ func UnrealizedCheckpoints(st state.BeaconState) (*ethpb.Checkpoint, *ethpb.Chec
 	activeBalance, prevTarget, currentTarget, err := st.UnrealizedCheckpointBalances()
 	if err != nil {
 		return nil, nil, err
+	}
+
+	epochStart, _ := slots.EpochStart(slots.ToEpoch(st.Slot()))
+	if (st.Slot() - epochStart) >= 16 {
+		jc := st.CurrentJustifiedCheckpoint()
+		fc := st.FinalizedCheckpoint()
+		log.WithFields(log.Fields{
+			"jc": jc.Epoch,
+			"fc": fc.Epoch,
+		}).Debug("stop update justification and finalization checkpoints, slot is too far from epoch start")
+		return st.CurrentJustifiedCheckpoint(), st.FinalizedCheckpoint(), nil
 	}
 
 	justification := processJustificationBits(st, activeBalance, prevTarget, currentTarget)

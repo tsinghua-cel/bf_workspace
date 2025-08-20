@@ -8,7 +8,6 @@ import (
 	"github.com/prysmaticlabs/prysm/v4/consensus-types/primitives"
 	v1 "github.com/prysmaticlabs/prysm/v4/proto/eth/v1"
 	"github.com/prysmaticlabs/prysm/v4/time/slots"
-	"github.com/sirupsen/logrus"
 )
 
 // orphanLateBlockFirstThreshold is the number of seconds after which we
@@ -110,13 +109,13 @@ func (n *Node) viableForHead(justifiedEpoch, currentEpoch primitives.Epoch) bool
 	//	"bestDescendant": n.bestDescendant,
 	//}).Debug("before checking whether to viable for head")
 
-	log.WithFields(logrus.Fields{
-		"slot":         n.slot,
-		"slotEpoch":    slots.ToEpoch(n.slot),
-		"currentEpoch": currentEpoch,
-		"justified":    justified,
-	}).Debug("checking whether to viable for head")
-	justified = justified && (slots.ToEpoch(n.slot) == currentEpoch)
+	//log.WithFields(logrus.Fields{
+	//	"slot":         n.slot,
+	//	"slotEpoch":    slots.ToEpoch(n.slot),
+	//	"currentEpoch": currentEpoch,
+	//	"justified":    justified,
+	//}).Debug("checking whether to viable for head")
+	//justified = justified && (slots.ToEpoch(n.slot) == currentEpoch)
 
 	return justified
 }

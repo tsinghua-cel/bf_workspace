@@ -40,6 +40,19 @@ func (f *ForkChoice) NewSlot(ctx context.Context, slot primitives.Slot) error {
 		return nil
 	}
 
+	//canContinue := false
+	//for !canContinue {
+	//	findTrigger := false
+	//	for _, node := range f.store.nodeByRoot {
+	//		if slots.ToEpoch(node.slot) == slots.ToEpoch(slot) {
+	//			findTrigger = true
+	//		}
+	//	}
+	//	if findTrigger {
+	//		canContinue = true
+	//	}
+	//}
+
 	// Update store.justified_checkpoint if a better checkpoint on the store.finalized_checkpoint chain
 	if err := f.updateUnrealizedCheckpoints(ctx); err != nil {
 		return errors.Wrap(err, "could not update unrealized checkpoints")
