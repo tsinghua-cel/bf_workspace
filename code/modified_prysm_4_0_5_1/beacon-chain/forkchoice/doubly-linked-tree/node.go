@@ -103,23 +103,20 @@ func (n *Node) viableForHead(justifiedEpoch, currentEpoch primitives.Epoch) bool
 	//		justified = true
 	//	}
 	//}
-	log.WithFields(logrus.Fields{
-		"justified":      justified,
-		"justifiedEpoch": justifiedEpoch,
-		"n.slot":         n.slot,
-		"bestDescendant": n.bestDescendant,
-	}).Debug("before checking whether to viable for head")
+	//log.WithFields(logrus.Fields{
+	//	"justified":      justified,
+	//	"justifiedEpoch": justifiedEpoch,
+	//	"n.slot":         n.slot,
+	//	"bestDescendant": n.bestDescendant,
+	//}).Debug("before checking whether to viable for head")
 
-	if justified && n.bestDescendant != nil {
-		log.WithFields(logrus.Fields{
-			"slot":           n.slot,
-			"bestDescendant": n.bestDescendant.slot,
-			"currentEpoch":   currentEpoch,
-		}).Debug("checking whether to viable for head")
-	}
-	if justified && n.bestDescendant != nil {
-		justified = justified && (slots.ToEpoch(n.bestDescendant.slot) == currentEpoch)
-	}
+	log.WithFields(logrus.Fields{
+		"slot":         n.slot,
+		"slotEpoch":    slots.ToEpoch(n.slot),
+		"currentEpoch": currentEpoch,
+		"justified":    justified,
+	}).Debug("checking whether to viable for head")
+	justified = justified && (slots.ToEpoch(n.slot) == currentEpoch)
 
 	return justified
 }
