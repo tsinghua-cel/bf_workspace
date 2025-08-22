@@ -103,7 +103,6 @@ func (n *Node) viableForHead(justifiedEpoch, currentEpoch primitives.Epoch) bool
 	//		justified = true
 	//	}
 	//}
-	justified = justified && slots.ToEpoch(n.bestDescendant.slot) == currentEpoch
 	return justified
 }
 
