@@ -43,9 +43,11 @@ func (f *ForkChoice) applyProposerBoostScore() error {
 					"committeeWeight": s.committeeWeight,
 					"node_slot":       currentNode.slot,
 					"nodebalance":     currentNode.balance,
+					"nodeweight":      currentNode.weight,
 				}).Debug("add more weight in applying weight")
-				
+
 				currentNode.balance += s.committeeWeight / 10
+				currentNode.weight += s.committeeWeight / 10
 			}
 		}
 	}
