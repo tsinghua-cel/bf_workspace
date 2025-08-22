@@ -21,14 +21,14 @@ const ProcessAttestationsThreshold = 10
 
 // applyWeightChanges recomputes the weight of the node passed as an argument and all of its descendants,
 // using the current balance stored in each node.
-func (n *Node) applyWeightChanges(ctx context.Context) error {
+func (n *Node) applyWeightChanges(ctx context.Context, store *Store) error {
 	// Recursively calling the children to sum their weights.
 	childrenWeight := uint64(0)
 	for _, child := range n.children {
 		if ctx.Err() != nil {
 			return ctx.Err()
 		}
-		if err := child.applyWeightChanges(ctx); err != nil {
+		if err := child.applyWeightChanges(ctx, store); err != nil {
 			return err
 		}
 		childrenWeight += child.weight
@@ -37,6 +37,10 @@ func (n *Node) applyWeightChanges(ctx context.Context) error {
 		return nil
 	}
 	n.weight = n.balance + childrenWeight
+	epochStart, _ := slots.EpochStart(slots.ToEpoch(n.slot))
+	if n.slot == epochStart {
+		n.weight += (store.committeeWeight) / 10
+	}
 	return nil
 }
 
