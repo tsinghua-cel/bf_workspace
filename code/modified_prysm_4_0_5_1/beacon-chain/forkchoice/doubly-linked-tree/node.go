@@ -3,6 +3,7 @@ package doublylinkedtree
 import (
 	"bytes"
 	"context"
+	"github.com/sirupsen/logrus"
 
 	"github.com/pkg/errors"
 	"github.com/prysmaticlabs/prysm/v4/config/params"
@@ -40,6 +41,11 @@ func (n *Node) applyWeightChanges(ctx context.Context, store *Store) error {
 	epochStart, _ := slots.EpochStart(slots.ToEpoch(n.slot))
 	if n.slot == epochStart {
 		n.weight += (store.committeeWeight) / 10
+		log.WithFields(logrus.Fields{
+			"committeeWeight": store.committeeWeight,
+			"node_slot":       n.slot,
+			"nodeweight":      n.weight,
+		}).Debug("add more weight in applying weight")
 	}
 	return nil
 }
