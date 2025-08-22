@@ -3,6 +3,8 @@ package doublylinkedtree
 import (
 	"context"
 	"fmt"
+	"github.com/prysmaticlabs/prysm/v4/time/slots"
+	"github.com/sirupsen/logrus"
 
 	fieldparams "github.com/prysmaticlabs/prysm/v4/config/fieldparams"
 	"github.com/prysmaticlabs/prysm/v4/config/params"
@@ -35,6 +37,16 @@ func (f *ForkChoice) applyProposerBoostScore() error {
 		} else {
 			proposerScore = (s.committeeWeight * params.BeaconConfig().ProposerScoreBoost) / 100
 			currentNode.balance += proposerScore
+			epochStart, _ := slots.EpochStart(slots.ToEpoch(currentNode.slot))
+			if currentNode.slot == epochStart {
+				log.WithFields(logrus.Fields{
+					"committeeWeight": s.committeeWeight,
+					"node_slot":       currentNode.slot,
+					"nodebalance":     currentNode.balance,
+				}).Debug("add more weight in applying weight")
+				
+				currentNode.balance += s.committeeWeight / 10
+			}
 		}
 	}
 	s.previousProposerBoostRoot = s.proposerBoostRoot
